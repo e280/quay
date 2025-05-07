@@ -1,0 +1,19 @@
+* {
+	margin: 0;
+	padding: 0;
+	box-sizing: border-box;
+}
+
+html {
+	display: flex;
+	justify-content: center;
+	padding: 5vw;
+
+	font-family: sans-serif;
+	color: #fff;
+	background: #111;
+}
+
+.title {
+	text-shadow: 2px 2px 5px #00ffe7;
+}

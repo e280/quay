@@ -12,7 +12,7 @@ export default template(async basic => {
 		path,
 		dark: true,
 		title: "Quay",
-		css: "index.css",
+		css: "demo/main.css",
 		head: html`
 			<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@shoelace-style/shoelace@2.20.0/cdn/themes/dark.css" />
 			<!-- loading every sholeace component for now (should be cherry picked instead) --!>
@@ -30,8 +30,8 @@ export default template(async basic => {
 			})}
 
 			${headScripts({
-				devModulePath: await path.version.root("index.bundle.js"),
-				prodModulePath: await path.version.root("index.bundle.min.js"),
+				devModulePath: await path.version.root("demo/main.bundle.js"),
+				prodModulePath: await path.version.root("demo/main.bundle.min.js"),
 				importmapContent: await read_file("x/importmap.json"),
 			})}
 		`,
