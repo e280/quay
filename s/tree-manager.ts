@@ -1,28 +1,31 @@
+import {signal} from "@benev/slate"
 import {TreeItem} from "./types.js"
-import {Emitter} from "./utils/emitter.js"
 
-export class TreeManager extends Emitter {
-	#items = new Map<string, TreeItem>()
+export class TreeManager {
+	#items = signal(new Map<string, TreeItem>())
+
+	get items() {
+		const array = [...this.#items.value.values()]
+		return array.toSorted((a, b) => a.sortIndex - b.sortIndex)
+	}
 
 	create = (item: TreeItem) => {
-		this.#items.set(item.id, item)
-		this.emit()
+		this.#items.value.set(item.id, item)
+		this.#items.publish()
 	}
 
 	update = (id: string, patch: Partial<TreeItem>) => {
-		const current = this.#items.get(id)
+		const current = this.#items.value.get(id)
 		if (!current) return
-		this.#items.set(id, {...current, ...patch})
-		this.emit()
+		this.#items.value.set(id, {...current, ...patch})
+		this.#items.publish()
 	}
 
 	remove = (id: string) => {
-		this.#items.delete(id)
-		this.emit()
+		this.#items.value.delete(id)
+		this.#items.publish()
 	}
 
 	move = (id: string, parentId: string | null, sortIndex: number) =>
 		this.update(id, {parentId, sortIndex})
-
-	getAll = () => Array.from(this.#items.values()).sort((a, b) => a.sortIndex - b.sortIndex)
 }

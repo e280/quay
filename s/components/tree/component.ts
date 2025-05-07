@@ -1,21 +1,15 @@
-import {html, signal, shadowView, TemplateResult, css} from "@benev/slate"
+import {html, shadowView, TemplateResult, css} from "@benev/slate"
 import {context} from "../../context.js"
 import {ItemType, TreeItem} from "../../types.js"
 
 export const Tree = shadowView(use => () => {
-	const tree = context.tree
-	const items = signal<TreeItem[]>(tree.getAll())
+	const {tree} = context
 
 	use.styles(context.theme, css`
 		sl-tree-item::part(expand-button) {
 			rotate: none;
 		}
 	`)
-
-	use.mount(() => {
-		const off = tree.subscribe(() => items.value = tree.getAll())
-		return () => off()
-	})
 
 	const icon = (t: ItemType, open?: boolean) => ({
 		folder: open ? 'folder2-open' : "folder",
@@ -49,6 +43,6 @@ export const Tree = shadowView(use => () => {
 
 	return html`
 		<sl-tree>
-			${buildTree(items.value).map(render)}
+			${buildTree(tree.items).map(render)}
 		</sl-tree>`
 })
