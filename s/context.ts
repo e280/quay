@@ -1,6 +1,8 @@
+import themeCss from "./theme.css.js"
 import {TreeManager} from "./tree-manager.js"
 
 class Quay {
+	theme = themeCss
 	readonly tree = new TreeManager()
 }
 

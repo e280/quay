@@ -1,7 +1,7 @@
-import {register_to_dom} from "@benev/slate"
 
+import {register} from "@benev/slate"
 import {QuayOutliner} from "./components/outline.js"
 
-register_to_dom({QuayOutliner})
-
+register({QuayOutliner})
 document.documentElement.className = "sl-theme-dark"
+

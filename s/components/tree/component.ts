@@ -1,13 +1,12 @@
-import {html, signal, shadowView, TemplateResult, css} from '@benev/slate'
-
-import {context} from '../../context.js'
-import {ItemType, TreeItem} from '../../types.js'
+import {html, signal, shadowView, TemplateResult, css} from "@benev/slate"
+import {context} from "../../context.js"
+import {ItemType, TreeItem} from "../../types.js"
 
 export const Tree = shadowView(use => () => {
 	const tree = context.tree
 	const items = signal<TreeItem[]>(tree.getAll())
 
-	use.styles(css`
+	use.styles(context.theme, css`
 		sl-tree-item::part(expand-button) {
 			rotate: none;
 		}
