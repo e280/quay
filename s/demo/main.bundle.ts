@@ -1,7 +1,5 @@
-
 import {register} from "@benev/slate"
-import {QuayOutliner} from "../components/outline.js"
+import {components, setShoelaceDarkTheme} from "../dom/components.js"
 
-register({QuayOutliner})
-document.documentElement.className = "sl-theme-dark"
-
+setShoelaceDarkTheme()
+register(components)

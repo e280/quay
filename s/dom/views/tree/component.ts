@@ -1,6 +1,6 @@
 import {html, shadowView, TemplateResult, css} from "@benev/slate"
 import {context} from "../../context.js"
-import {ItemType, TreeItem} from "../../types.js"
+import {ItemType, TreeItem} from "../../../logic/types.js"
 
 export const Tree = shadowView(use => () => {
 	const {tree} = context

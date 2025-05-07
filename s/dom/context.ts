@@ -1,5 +1,5 @@
 import themeCss from "./theme.css.js"
-import {TreeManager} from "./tree-manager.js"
+import {TreeManager} from "../logic/tree-manager.js"
 
 class Quay {
 	theme = themeCss

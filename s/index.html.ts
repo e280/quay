@@ -41,7 +41,6 @@ export default template(async basic => {
 			</h1>
 
 			<quay-outliner></quay-outliner>
-
 		`,
 	})
 })
