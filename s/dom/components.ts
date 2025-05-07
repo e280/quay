@@ -1,8 +1,9 @@
 
 import {QuayOutliner} from "./components/outliner/component.js"
-export {QuayOutliner}
+import {QuaySearchbar} from "./components/searchbar/component.js"
+export {QuayOutliner, QuaySearchbar}
 
-export const components = {QuayOutliner}
+export const components = {QuayOutliner, QuaySearchbar}
 
 export function setShoelaceDarkTheme() {
 	document.documentElement.className = "sl-theme-dark"
