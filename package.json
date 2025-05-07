@@ -1,38 +1,42 @@
 {
 	"name": "quay",
-	"version": "0.0.0",
+	"version": "0.0.0-0",
 	"description": "",
-	"main": "index.js",
-	"type": "module",
-	"scripts": {
-		"build": "rm -rf x && run-s build-code build-ssg links",
-		"build-code": "turtle build --out=x",
-		"build-ssg": "turtle ssg --in=s,x --out=x",
-		"start": "run-p start-http start-turtle",
-		"start-http": "http-server x",
-		"start-turtle": "turtle watch --in=s,x --out=x -v",
-		"links": "run-s links-s links-assets",
-		"links-s": "ln -s \"$(realpath s)\" x/s",
-		"links-assets": "ln -s \"$(realpath assets)\" x/assets",
-		"test": "exit 0"
-	},
-	"repository": {
-		"type": "git",
-		"url": "git+https://github.com/e280/quay.git"
-	},
-	"author": "",
+	"author": "Przemysław Gałęzki",
 	"license": "MIT",
-	"bugs": {
-		"url": "https://github.com/e280/quay/issues"
-	},
-	"homepage": "https://github.com/e280/quay#readme",
+	"type": "module",
+	"main": "x/index.js",
+	"files": [
+		"x",
+		"s"
+	],
 	"dependencies": {
-		"@benev/slate": "^0.3.2"
+		"@benev/slate": "^0.3.3"
 	},
 	"devDependencies": {
 		"@benev/turtle": "^0.6.12",
 		"http-server": "^14.1.1",
 		"npm-run-all": "^4.1.5",
 		"typescript": "^5.8.3"
+	},
+	"scripts": {
+		"build": "rm -rf x && mkdir x && run-s _code _ssg _ln",
+		"start": "run-p _http _turtlewatch",
+		"test": "exit 0",
+		"_code": "turtle build --out=x",
+		"_ssg": "turtle ssg --in=s,x --out=x",
+		"_http": "http-server x",
+		"_turtlewatch": "turtle watch --in=s,x --out=x -v",
+		"_ln": "run-s _ln:s _ln:assets",
+		"_ln:s": "ln -s \"$(realpath s)\" x/s",
+		"_ln:assets": "ln -s \"$(realpath assets)\" x/assets"
+	},
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/e280/quay.git"
+	},
+	"homepage": "https://github.com/e280/quay#readme",
+	"bugs": {
+		"url": "https://github.com/e280/quay/issues"
 	}
 }
