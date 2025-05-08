@@ -74,7 +74,7 @@ const brain = new Quay.Brain({
 
   icons: Quay.icons.standard,
   theme: Quay.themes.standard,
-  contextMenu: Quay.contextMenu.standard,
+  contextMenu: Quay.contextMenus.standard,
 
   permissions: Quay.permissions.all,
   allowSearch: true,
