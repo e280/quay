@@ -40,6 +40,8 @@ export default template(async basic => {
 				<span>Quay</span>
 			</h1>
 
+			<quay-dropzone></quay-dropzone>
+
 			<div>
 				<quay-searchbar></quay-searchbar>
 				<quay-outliner></quay-outliner>

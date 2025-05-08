@@ -1,4 +1,4 @@
-export type ItemType = 'video' | 'image' | 'audio' | 'folder'
+export type ItemType = 'video' | 'image' | 'audio' | 'folder' | string
 
 type TreeItemBase = {
 	id: string
