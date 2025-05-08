@@ -63,8 +63,8 @@ In this section, several different intergration examples are provided.
 ```ts
 import * as Quay from "@e280/quay"
 
-const file = Quay.make.item({icon: "file", label: "My cool file"})
-const folder = Quay.make.folder({children: [file.id]})
+const file = Quay.make.file({label: "My cool file"})
+const folder = Quay.make.folder({label: "My project", children: [file.id]})
 
 const brain = new Quay.Brain({
   state: new Quay.State({
@@ -76,21 +76,43 @@ const brain = new Quay.Brain({
   theme: Quay.themes.standard,
   contextMenu: Quay.contextMenus.standard,
 
-  permissions: Quay.permissions.all,
   allowSearch: true,
-  allowManualSorting: true,
   allowRefresh: true,
+  permissions: async item => Quay.permissions.all,
 
-  onNewFolder: async folder => {},
-  onMove: async move => {},
-  onSearch: async search => {},
-  onDelete: async del => {},
-  onRename: async rename => {},
-  onRefresh: async rename => {},
-  onDragAndDrop: async dnd => {},
-  onDrop: async drop => {},
+  actions: {
+    newFolder: async folder => {},
+    move: async move => {},
+    search: async search => {},
+    delete: async del => {},
+    rename: async rename => {},
+    refresh: async refresh => {},
+    dragAndDrop: async dnd => {},
+    upload: async upload => {},
+  },
 })
 
 Quay.register(brain.components())
 ```
+
+### Flexible permissions
+
+Let's say you wanted to make a particular folder read-only
+
+```ts
+const restricted = Quay.make.folder({label: "Restricted"})
+
+new Quay.Brain({
+  ...stuff,
+
+  permissions: async item => {
+    if (item.id === restricted.id)
+      return Quay.permissions.readOnly
+    else
+      return Quay.permissions.all
+  },
+})
+```
+
+In this way, you can setup sophisticated rules about what actions are permitted, and under whatever changing circumstances.
 
