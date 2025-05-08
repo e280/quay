@@ -32,10 +32,12 @@
 		"_ln:assets": "ln -s \"$(realpath assets)\" x/assets"
 	},
 	"keywords": [
-		"file-browser",
-		"web-components",
+		"opfs",
+		"file browser",
+		"web components",
 		"outliner",
-		"ui"
+		"drag and drop",
+		"web ui"
 	],
 	"repository": {
 		"type": "git",
