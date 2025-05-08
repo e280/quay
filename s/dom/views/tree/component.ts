@@ -9,6 +9,14 @@ export const Tree = shadowView(use => () => {
 		sl-tree-item::part(expand-button) {
 			rotate: none;
 		}
+
+		sl-icon:is(.item) {
+			padding: 0.5em;
+		}
+
+		sl-tree-item:not([data-type=folder])::part(expand-button) {
+			display: none;
+		}
 	`)
 
 	const icon = (t: ItemType, open?: boolean) => ({
@@ -42,20 +50,20 @@ export const Tree = shadowView(use => () => {
 	}
 
 	const render = (n: NestedTreeItem): TemplateResult => html`
-		<sl-tree-item>
+		<sl-tree-item data-type=${n.type}>
 			${n.type === 'folder'
 				? html`
 					<sl-icon slot='expand-icon'   name='${icon('folder')}'></sl-icon>
 					<sl-icon slot='collapse-icon' name='${icon('folder', true)}'></sl-icon>
 				`
-				: html`<sl-icon name='${icon(n.type)}'></sl-icon>`}
+				: html`<sl-icon class='item' name='${icon(n.type)}'></sl-icon>`}
 			${n.name}
 			${n.children?.map(render)}
 		</sl-tree-item>
 	`
 
 	return html`
-		<sl-tree>
+		<sl-tree selection=leaf>
 			${buildNestedTree(tree.items).map(render)}
 		</sl-tree>`
 })
