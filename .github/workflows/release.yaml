@@ -44,6 +44,8 @@ jobs:
         mv node_modules x/node_modules
         mv s x/s
 
+    - run: du -sh ./x
+
     - name: 📤 upload pages artifact
       uses: actions/upload-pages-artifact@v3
       with:
