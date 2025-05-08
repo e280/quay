@@ -35,7 +35,6 @@ jobs:
       run: |
         rm x/node_modules
         rm x/s
-        rm x/assets
 
     - name: 🗃️ reconstitute node_modules for production
       run: npm ci --omit=dev
@@ -44,7 +43,6 @@ jobs:
       run: |
         mv node_modules x/node_modules
         mv s x/s
-        mv assets x/assets
 
     - name: 📤 upload pages artifact
       uses: actions/upload-pages-artifact@v3
