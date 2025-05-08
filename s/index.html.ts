@@ -1,5 +1,5 @@
 import "@benev/slate/x/node.js"
-import {template, html, easypage, headScripts, git_commit_hash, read_file, renderSocialCard} from "@benev/turtle"
+import {template, html, easypage, headScripts, git_commit_hash, read_file, renderSocialCard, read_json} from "@benev/turtle"
 
 const domain = "quay.e280.org"
 const favicon = "/assets/favicon.png"
@@ -7,6 +7,7 @@ const favicon = "/assets/favicon.png"
 export default template(async basic => {
 	const path = basic.path(import.meta.url)
 	const hash = await git_commit_hash()
+	const version = (await read_json("package.json")).version as string
 
 	return easypage({
 		path,
@@ -36,9 +37,13 @@ export default template(async basic => {
 			})}
 		`,
 		body: html`
-			<h1 class=title>
-				<span>Quay</span>
-			</h1>
+			<header class=title>
+				<img alt="" src="/assets/favicon.png"/>
+				<div>
+					<h1>Quay</h1>
+					<span class=version>v${version}</span>
+				</div>
+			</header>
 
 			<quay-dropzone></quay-dropzone>
 
