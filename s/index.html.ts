@@ -1,12 +1,13 @@
 import "@benev/slate/x/node.js"
-import {template, html, easypage, headScripts, git_commit_hash, read_file, renderSocialCard} from "@benev/turtle"
+import {template, html, easypage, headScripts, git_commit_hash, read_file, renderSocialCard, read_json} from "@benev/turtle"
 
-const domain = "quay.com"
+const domain = "quay.e280.org"
 const favicon = "/assets/favicon.png"
 
 export default template(async basic => {
 	const path = basic.path(import.meta.url)
 	const hash = await git_commit_hash()
+	const version = (await read_json("package.json")).version as string
 
 	return easypage({
 		path,
@@ -21,10 +22,10 @@ export default template(async basic => {
 			<meta data-commit-hash="${hash}"/>
 
 			${renderSocialCard({
-				themeColor: "#8800ff",
-				siteName: "Quay",
-				title: "Quay – outliner",
-				description: "",
+				themeColor: "#eb6f1d",
+				siteName: domain,
+				title: "Quay — File-browser UI Framework",
+				description: "Customizable outliner web ui toolkit for nested things",
 				image: `https://${domain}${favicon}`,
 				url: `https://${domain}/`,
 			})}
@@ -36,9 +37,13 @@ export default template(async basic => {
 			})}
 		`,
 		body: html`
-			<h1 class=title>
-				<span>Quay</span>
-			</h1>
+			<header class=title>
+				<img alt="" src="/assets/favicon.png"/>
+				<div>
+					<h1>Quay</h1>
+					<span class=version>v${version}</span>
+				</div>
+			</header>
 
 			<quay-dropzone></quay-dropzone>
 

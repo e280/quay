@@ -1,7 +1,7 @@
 {
-	"name": "quay",
+	"name": "@e280/quay",
 	"version": "0.0.0-0",
-	"description": "",
+	"description": "File-browser and outliner UI for the web",
 	"author": "Przemysław Gałęzki",
 	"license": "MIT",
 	"type": "module",
@@ -11,7 +11,8 @@
 		"s"
 	],
 	"dependencies": {
-		"@benev/slate": "^0.3.3"
+		"@benev/slate": "^0.3.3",
+		"@e280/stz": "^0.0.0-13"
 	},
 	"devDependencies": {
 		"@benev/turtle": "^0.6.12",
@@ -31,6 +32,14 @@
 		"_ln:s": "ln -s \"$(realpath s)\" x/s",
 		"_ln:assets": "ln -s \"$(realpath assets)\" x/assets"
 	},
+	"keywords": [
+		"opfs",
+		"file browser",
+		"web components",
+		"outliner",
+		"drag and drop",
+		"web ui"
+	],
 	"repository": {
 		"type": "git",
 		"url": "git+https://github.com/e280/quay.git"

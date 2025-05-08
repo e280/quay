@@ -8,12 +8,11 @@
 
 <br/><br/>
 
-<div align="center"><img alt="" width=256 src="https://i.imgur.com/tranhbs.png"/></div>
+<div align="center"><img alt="" width=320 src="assets/favicon.png"/></div>
 
 # 🪝 Quay
-> Outliner UI for the web — files, folders, layers, etc
 
-**Quay** is a outliner ui for the web. It provides a good user experience for interacting with files, folders, layers — any nested tree.
+**Quay** is file-browser and outliner ui toolkit for the web. It provides a good user experience for interacting with files, folders, layers — any nested tree.
 
 List-view or icons-view. Reorganize with drag-and-drop. Quick-search. Renaming things. Dropping files.
 
