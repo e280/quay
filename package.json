@@ -1,7 +1,7 @@
 {
-	"name": "quay",
+	"name": "@e280/quay",
 	"version": "0.0.0-0",
-	"description": "",
+	"description": "File-browser and outliner UI for the web",
 	"author": "Przemysław Gałęzki",
 	"license": "MIT",
 	"type": "module",
@@ -31,6 +31,12 @@
 		"_ln:s": "ln -s \"$(realpath s)\" x/s",
 		"_ln:assets": "ln -s \"$(realpath assets)\" x/assets"
 	},
+	"keywords": [
+		"file-browser",
+		"web-components",
+		"outliner",
+		"ui"
+	],
 	"repository": {
 		"type": "git",
 		"url": "git+https://github.com/e280/quay.git"

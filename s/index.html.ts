@@ -1,7 +1,7 @@
 import "@benev/slate/x/node.js"
 import {template, html, easypage, headScripts, git_commit_hash, read_file, renderSocialCard} from "@benev/turtle"
 
-const domain = "quay.com"
+const domain = "quay.e280.org"
 const favicon = "/assets/favicon.png"
 
 export default template(async basic => {
@@ -21,10 +21,10 @@ export default template(async basic => {
 			<meta data-commit-hash="${hash}"/>
 
 			${renderSocialCard({
-				themeColor: "#8800ff",
+				themeColor: "#eb6f1d",
 				siteName: "Quay",
-				title: "Quay – outliner",
-				description: "",
+				title: "Quay — File-browser UI Framework",
+				description: "Customizable outliner web ui toolkit for nested things",
 				image: `https://${domain}${favicon}`,
 				url: `https://${domain}/`,
 			})}
