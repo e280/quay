@@ -1,14 +1,17 @@
 export type ItemType = 'video' | 'image' | 'audio' | 'folder'
 
-export interface TreeItem {
+type TreeItemBase = {
 	id: string
 	name: string
 	type: ItemType
-	parentId: string | null
 	createdAt: number
 	sortIndex: number
 }
 
-export type NestedTreeItem = TreeItem & {
-	children?: NestedTreeItem[]
+export type TreeItem = TreeItemBase & {
+	parentId: string | null
+}
+
+export type NestedTreeItem = TreeItemBase & {
+	children: NestedTreeItem[]
 }

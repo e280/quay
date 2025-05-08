@@ -23,13 +23,13 @@ export const Tree = shadowView(use => () => {
 		items
 			.filter(i => i.parentId === null)
 			.map(root => collectDeep(root, items))
-			.filter(Boolean) as TreeItem[]
+			.filter(n => n !== null)
 
 	const collectDeep = (node: TreeItem, items: TreeItem[]): NestedTreeItem | null => {
 		const children = items
 			.filter(i => i.parentId === node.id)
 			.map(child => collectDeep(child, items))
-			.filter(Boolean) as TreeItem[]
+			.filter(c => c !== null)
 
 		const isLeaf = node.type !== 'folder'
 		const matchesLeaf = isLeaf && search.matches(node.name)
