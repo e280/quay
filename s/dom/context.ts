@@ -1,9 +1,11 @@
 import themeCss from "./theme.css.js"
+import {TreeSearch} from "../logic/tree-search.js"
 import {TreeManager} from "../logic/tree-manager.js"
 
 class Quay {
 	theme = themeCss
 	readonly tree = new TreeManager()
+	readonly search = new TreeSearch()
 }
 
 export const context = new Quay()
@@ -19,7 +21,6 @@ context.tree.create({
 	parentId: null,
 	createdAt: now,
 	sortIndex: 0,
-	children: []
 })
 
 context.tree.create({

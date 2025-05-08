@@ -1,9 +1,9 @@
 import {html, shadowView, TemplateResult, css} from "@benev/slate"
 import {context} from "../../context.js"
-import {ItemType, TreeItem} from "../../../logic/types.js"
+import {ItemType, TreeItem, NestedTreeItem} from "../../../logic/types.js"
 
 export const Tree = shadowView(use => () => {
-	const {tree} = context
+	const {tree, search} = context
 
 	use.styles(context.theme, css`
 		sl-tree-item::part(expand-button) {
@@ -18,17 +18,30 @@ export const Tree = shadowView(use => () => {
 		image: 'image'
 	}[t])
 
-	const buildTree = (items: TreeItem[]) =>
+	// build nested tree from flat tree
+	const buildNestedTree = (items: TreeItem[]): NestedTreeItem[] =>
 		items
 			.filter(i => i.parentId === null)
-			.map(root => ({ ...root, children: collect(root.id, items) }))
+			.map(root => collectDeep(root, items))
+			.filter(Boolean) as TreeItem[]
 
-	const collect = (pid: string, items: TreeItem[]): TreeItem[] =>
-		items
-			.filter(i => i.parentId === pid)
-			.map(child => ({ ...child, children: collect(child.id, items) }))
+	const collectDeep = (node: TreeItem, items: TreeItem[]): NestedTreeItem | null => {
+		const children = items
+			.filter(i => i.parentId === node.id)
+			.map(child => collectDeep(child, items))
+			.filter(Boolean) as TreeItem[]
 
-	const render = (n: TreeItem): TemplateResult => html`
+		const isLeaf = node.type !== 'folder'
+		const matchesLeaf = isLeaf && search.matches(node.name)
+		const hasMatchingDescendants = children.length > 0
+
+		if (!matchesLeaf && !hasMatchingDescendants)
+			return null
+
+		return {...node, children}
+	}
+
+	const render = (n: NestedTreeItem): TemplateResult => html`
 		<sl-tree-item>
 			${n.type === 'folder'
 				? html`
@@ -43,6 +56,6 @@ export const Tree = shadowView(use => () => {
 
 	return html`
 		<sl-tree>
-			${buildTree(tree.items).map(render)}
+			${buildNestedTree(tree.items).map(render)}
 		</sl-tree>`
 })

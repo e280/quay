@@ -7,5 +7,8 @@ export interface TreeItem {
 	parentId: string | null
 	createdAt: number
 	sortIndex: number
-	children?: TreeItem[]
+}
+
+export type NestedTreeItem = TreeItem & {
+	children?: NestedTreeItem[]
 }
