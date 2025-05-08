@@ -23,7 +23,7 @@ export default template(async basic => {
 
 			${renderSocialCard({
 				themeColor: "#eb6f1d",
-				siteName: "Quay",
+				siteName: domain,
 				title: "Quay — File-browser UI Framework",
 				description: "Customizable outliner web ui toolkit for nested things",
 				image: `https://${domain}${favicon}`,
