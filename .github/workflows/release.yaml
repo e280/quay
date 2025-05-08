@@ -33,13 +33,14 @@ jobs:
 
     - name: 🗑️ delete dev symlinks
       run: |
+        rm x/assets
         rm x/node_modules
         rm x/s
 
     - name: 🍞 moving files into x
       run: |
-        mv s x/s
         mv assets x/assets
+        mv s x/s
 
     - run: du -sh ./x
 
