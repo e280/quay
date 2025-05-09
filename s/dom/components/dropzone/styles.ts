@@ -2,6 +2,8 @@ import {css} from "@benev/slate"
 
 export default css`
 .dropzone {
+	width: 100%;
+	height: 100%;
 	display: flex;
 	align-items: center;
 	justify-content: center;
@@ -12,8 +14,9 @@ export default css`
 }
 
 .dz-input {
+	width: 100%;
+	height: 100%;
 	z-index: 999;
-	height: 100px;
 	font-size: 14px;
 	cursor: pointer;
 	opacity: 0;

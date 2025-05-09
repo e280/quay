@@ -46,11 +46,13 @@ export default template(async basic => {
 			</header>
 
 			<quay-dropzone></quay-dropzone>
+			<quay-searchbar></quay-searchbar>
 
-			<div>
-				<quay-searchbar></quay-searchbar>
+			<div class=items>
 				<quay-outliner></quay-outliner>
+				<quay-browser></quay-browser>
 			</div>
+
 		`,
 	})
 })
