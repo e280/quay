@@ -1,11 +1,14 @@
-export type ItemType = 'video' | 'image' | 'audio' | 'folder' | string
+export type ItemType = 'video' | 'image' | 'audio' | string
 
 type TreeItemBase = {
 	id: string
 	name: string
-	type: ItemType
 	createdAt: number
 	sortIndex: number
+	allowChildren: boolean
+	meta?: {
+		type?: ItemType
+	}
 }
 
 export type TreeItem = TreeItemBase & {
@@ -14,4 +17,11 @@ export type TreeItem = TreeItemBase & {
 
 export type NestedTreeItem = TreeItemBase & {
 	children: NestedTreeItem[]
+}
+
+export interface QuaySchema<Item = any> {
+	getLabel(item: Item): string
+	getIcon(item: Item, open?: boolean): string
+	isFolder(item: Item): boolean
+	isVisible?(item: Item): boolean
 }

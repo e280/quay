@@ -1,31 +1,24 @@
 import {html, shadowComponent} from "@benev/slate"
 import styles from "./styles.js"
 import {context} from "../../context.js"
-import {TreeItem} from "../../../logic/types.js"
 
 export const QuayBrowser = shadowComponent(use => {
-	const {tree, search, theme} = context
+	const {tree, search, theme, schema} = context
 	const [viewMode, setViewMode] = use.state<'list' | 'details' | 'tiles' | 'content'>('tiles')
 
 	const getItems = () =>
 		tree.items.filter(item =>
-			item.type !== 'folder' && search.matches(item.name)
+			!item.allowChildren && search.matches(item.name)
 		)
 
 	use.styles(theme, styles)
-
-	const iconFor = (type: TreeItem['type']) => ({
-		video: 'film',
-		image: 'image',
-		audio: 'music-note'
-	}[type])
 
 	const renderTiles = () => html`
 		<div class="tiles">
 			${getItems().map(item => html`
 				<div class="item">
 					<div class="media-icon">
-						<sl-icon name=${iconFor(item.type)}></sl-icon>
+						<sl-icon name=${schema.getIcon(item)}></sl-icon>
 					</div>
 					<div class="label" title=${item.name}>${item.name}</div>
 				</div>
@@ -38,7 +31,7 @@ export const QuayBrowser = shadowComponent(use => {
 			${getItems().map(item => html`
 				<div class="item">
 					<div class="media-icon">
-						<sl-icon name=${iconFor(item.type)}></sl-icon>
+						<sl-icon name=${schema.getIcon(item)}></sl-icon>
 					</div>
 					<span>${item.name}</span>
 				</div>
@@ -50,9 +43,9 @@ export const QuayBrowser = shadowComponent(use => {
 		<div class="details">
 			${getItems().map(item => html`
 				<div class="row">
-					<sl-icon name=${iconFor(item.type)}></sl-icon>
+					<sl-icon name=${schema.getIcon(item)}></sl-icon>
 					<span>${item.name}</span>
-					<span class=type>${item.type}</span>
+					<span class=type>${item.meta?.type}</span>
 				</div>
 			`)}
 		</div>
@@ -62,10 +55,10 @@ export const QuayBrowser = shadowComponent(use => {
 		<div class="content">
 			${getItems().map(item => html`
 				<div class="card">
-					<sl-icon name=${iconFor(item.type)}></sl-icon>
+					<sl-icon name=${schema.getIcon(item)}></sl-icon>
 					<div class=meta>
 						<div class=name>${item.name}</div>
-						<div class=type>${item.type}</div>
+						<div class=type>${item.meta?.type}</div>
 					</div>
 				</div>
 			`)}
