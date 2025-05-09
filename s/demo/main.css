@@ -53,3 +53,25 @@ body {
 		}
 	}
 }
+
+.items {
+	display: flex;
+	gap: 1em;
+	flex-wrap: wrap;
+}
+
+quay-browser {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	width: 300px;
+	justify-content: center;
+}
+
+quay-outliner {
+	width: 200px;
+}
+
+quay-dropzone {
+	height: 150px;
+}
