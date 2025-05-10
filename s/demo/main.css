@@ -60,6 +60,10 @@ body {
 	flex-wrap: wrap;
 }
 
+quay-browser, quay-searchbar, quay-outliner, quay-breadcrumb, quay-dropzone {
+	padding: 1em;
+}
+
 quay-browser {
 	display: flex;
 	flex-direction: column;
@@ -68,10 +72,51 @@ quay-browser {
 	justify-content: center;
 }
 
-quay-outliner {
-	width: 200px;
+quay-searchbar {
+	width: 100%;
 }
 
 quay-dropzone {
 	height: 150px;
+}
+
+.components {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 1em;
+}
+
+.component {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	gap: 0.5em;
+	width: 300px;
+	padding: 1em;
+
+	h4 {
+		color: #ED701E;
+		text-align: center;
+	}
+}
+
+.dropzone {
+	flex: 100%;
+}
+
+.searchbar {
+	flex: 1;
+}
+
+.outliner {
+	flex: 1;
+}
+
+.breadcrumb {
+	flex: 1;
+}
+
+.browser {
+	flex: 100%;
 }

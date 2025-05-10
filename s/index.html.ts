@@ -45,15 +45,34 @@ export default template(async basic => {
 				</div>
 			</header>
 
-			<quay-dropzone></quay-dropzone>
-			<quay-searchbar></quay-searchbar>
-			<quay-breadcrumb></quay-breadcrumb>
+			<div class=components>
 
-			<div class=items>
-				<quay-outliner></quay-outliner>
-				<quay-browser></quay-browser>
+				<div class="component dropzone">
+					<h4>quay-dropzone</h2>
+					<quay-dropzone></quay-dropzone>
+				</div>
+
+				<div class="component outliner">
+					<h4>quay-outliner</h2>
+					<quay-outliner></quay-outliner>
+				</div>
+
+				<div class="component searchbar">
+					<h4>quay-searchbar</h2>
+					<quay-searchbar></quay-searchbar>
+				</div>
+
+				<div class="component breadcrumb">
+					<h4>quay-breadcrumb</h2>
+					<quay-breadcrumb></quay-breadcrumb>
+				</div>
+
+				<div class="component browser">
+					<h4>quay-browser</h2>
+					<quay-browser></quay-browser>
+				</div>
+
 			</div>
-
 		`,
 	})
 })
