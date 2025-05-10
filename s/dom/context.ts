@@ -2,6 +2,7 @@ import themeCss from "./theme.css.js"
 import {Dropzone} from "../logic/dropzone.js"
 import {TreeSearch} from "../logic/tree-search.js"
 import {TreeManager} from "../logic/tree-manager.js"
+import {TreeNavigator} from "../logic/tree-navigator.js"
 import {NestedTreeItem, QuaySchema, TreeItem} from "../logic/types.js"
 
 class Quay {
@@ -9,6 +10,7 @@ class Quay {
 	readonly tree = new TreeManager()
 	readonly search = new TreeSearch()
 	readonly dropzone = new Dropzone()
+	readonly navigator = new TreeNavigator()
 	readonly schema: QuaySchema<TreeItem | NestedTreeItem> = {
 		getLabel: item => item.name,
 		getIcon: (item, open?: boolean) =>
@@ -53,6 +55,33 @@ context.tree.create({
 	parentId: null,
 	createdAt: now,
 	sortIndex: 0,
+	meta: {
+		type: "folder"
+	}
+})
+
+context.tree.create({
+	id: id(6),
+	name: 'Folder demo',
+	allowChildren: true,
+	parentId: id(0),
+	createdAt: now,
+	sortIndex: 2,
+	meta: {
+		type: "folder"
+	}
+})
+
+context.tree.create({
+	id: id(7),
+	name: 'Intro.mp4',
+	allowChildren: false,
+	parentId: id(6),
+	createdAt: now + 1,
+	sortIndex: 0,
+	meta: {
+		type: "video"
+	}
 })
 
 context.tree.create({

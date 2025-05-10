@@ -9,6 +9,10 @@ export class TreeManager {
 		return array.toSorted((a, b) => a.sortIndex - b.sortIndex)
 	}
 
+	getItem(id: string) {
+		return this.items.find(item => item.id === id)
+	}
+
 	create = (item: TreeItem) => {
 		this.#items.value.set(item.id, item)
 		this.#items.publish()
