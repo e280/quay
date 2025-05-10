@@ -3,6 +3,7 @@ import {MapG, sub} from "@e280/stz"
 import {Taxonomy} from "./taxonomy.js"
 import {AnySpecimen, Id, Kind, Schema} from "./types.js"
 
+/** each "item id" gets its own "kind" and associated "specimen" data */
 export class Clade<Sc extends Schema> {
 	onChange = sub()
 	#specimens = new MapG<Id, [Kind<Sc>, AnySpecimen<Sc>]>()

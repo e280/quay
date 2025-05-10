@@ -3,10 +3,15 @@ import {Content} from "@benev/slate"
 
 export type Id = string
 
+/**
+ * information about a "kind"
+ *  - eg, what icon "folder" or "file" kinds might have
+ */
 export type Taxon = {
 	icon: Content
 }
 
+/** each item "kind" has its own "specimen" type */
 export type Specimens = {[key: string]: {}}
 export type AsSpecimens<S extends Specimens> = S
 

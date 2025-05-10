@@ -1,8 +1,8 @@
 
 import {MapG} from "@e280/stz"
 import {Id} from "./types.js"
-import {generateId} from "../utils/generate-id.js"
 
+/** tree of nestable things */
 export class Hierarchy {
 	#children = new MapG<Id, Set<Id>>()
 	#parents = new MapG<Id, Id>()

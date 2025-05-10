@@ -1,4 +1,7 @@
 
+import "@benev/slate/x/node.js"
+import {repeat_string} from "@benev/turtle"
+
 import {Codex} from "./codex.js"
 import {AsSchema, Taxon} from "./parts/types.js"
 
@@ -31,4 +34,19 @@ codex.root(folder)
 src
 	.add(index)
 	.add(types)
+
+// project/
+//   README.md
+//   CHANGELOG.md
+//   src/
+//     index.ts
+//     types.ts
+for (const [item, ancestors] of folder.crawl()) {
+	const indent = repeat_string(ancestors.length, "  ")
+	const specimen = item.specimen
+	const label = item.kind === "folder"
+		? specimen.label + "/"
+		: specimen.label
+	console.log(indent + label)
+}
 
