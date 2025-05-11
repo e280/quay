@@ -31,14 +31,16 @@ export const context = new Quay()
 const now = Date.now()
 const id = (n: number) => `demo-${n}`
 
-context.dropzone.onFilesDropped = async files => {
+context.dropzone.onFilesDropped = async (files, dropTarget) => {
 	for (const file of files) {
+		const targetItem = context.tree.getItem(dropTarget)
+		const isFolder = targetItem?.allowChildren
 		context.tree.create({
 			id: crypto.randomUUID(),
 			name: file.name,
-			parentId: null,
+			parentId: !isFolder ? targetItem?.parentId : dropTarget,
 			createdAt: Date.now(),
-			sortIndex: 999,
+			sortIndex: !isFolder ? (targetItem?.sortIndex ?? 0) : context.tree.items[context.tree.items.length - 1].sortIndex,
 			allowChildren: false,
 			meta: {
 				type: file.type.split("/")[0]

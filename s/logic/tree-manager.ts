@@ -9,7 +9,7 @@ export class TreeManager {
 		return array.toSorted((a, b) => a.sortIndex - b.sortIndex)
 	}
 
-	getItem(id: string) {
+	getItem(id: string | undefined) {
 		return this.items.find(item => item.id === id)
 	}
 

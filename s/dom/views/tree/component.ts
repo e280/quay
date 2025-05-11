@@ -3,7 +3,7 @@ import {context} from "../../context.js"
 import {TreeItem, NestedTreeItem} from "../../../logic/types.js"
 
 export const Tree = shadowView(use => () => {
-	const {tree, search, schema, navigator} = context
+	const {tree, search, schema, navigator, dropzone} = context
 
 	use.styles(context.theme, css`
 		sl-tree-item::part(expand-button) {
@@ -16,6 +16,30 @@ export const Tree = shadowView(use => () => {
 
 		sl-tree-item:not([data-type=folder])::part(expand-button) {
 			display: none;
+		}
+
+		.file-import {
+			position: absolute;
+			opacity: 0;
+			left: 0;
+			width: 100%;
+		}
+
+		.folder-hover, .item-hover {
+			position: absolute;
+			width: 100%;
+			height: 30px;
+			left: 0;
+
+		}
+
+		.item-hover[data-hover] {
+			border-bottom: 1px solid var(--sl-color-primary-600);
+		}
+
+		.folder-hover[data-hover] {
+			border-radius: 5px;
+			border: 1px solid var(--sl-color-primary-600);
 		}
 	`)
 
@@ -48,6 +72,32 @@ export const Tree = shadowView(use => () => {
 		}
 	}
 
+	const dz = (n: NestedTreeItem) => html`
+		<div ?data-hover=${dropzone.dropTarget.value === n.id} class=${n.allowChildren ? "folder-hover" : "item-hover"}></div>
+		<input
+			@click=${(e: Event) => e.preventDefault()}
+			@dragenter=${(e: DragEvent) => dropzone.dragenter(e, n.id)}
+			@dragleave=${dropzone.dragleave}
+			@dragover=${dropzone.dragover}
+			@drop=${dropzone.drop}
+			id="file-import"
+			class="file-import"
+		>
+	`
+
+	const renderFolderItem = (n: NestedTreeItem) => html`
+		${dz(n)}
+		<sl-icon slot='expand-icon'   name='${schema.getIcon(n)}'></sl-icon>
+		<sl-icon slot='collapse-icon' name='${schema.getIcon(n, true)}'></sl-icon>
+		${n.name}
+	`
+
+	const renderItem = (n: NestedTreeItem) => html`
+		${dz(n)}
+		<sl-icon class='item' name='${schema.getIcon(n)}'></sl-icon>
+		${n.name}
+	`
+
 	const render = (n: NestedTreeItem, path: (string|null)[]): TemplateResult => {
 		const newPath = [...path, n.id]
 		return html`
@@ -56,12 +106,8 @@ export const Tree = shadowView(use => () => {
 				data-type=${n.meta?.type}
 			>
 				${n.allowChildren
-					? html`
-						<sl-icon slot='expand-icon'   name='${schema.getIcon(n)}'></sl-icon>
-						<sl-icon slot='collapse-icon' name='${schema.getIcon(n, true)}'></sl-icon>
-					`
-					: html`<sl-icon class='item' name='${schema.getIcon(n)}'></sl-icon>`}
-				${n.name}
+					? renderFolderItem(n)
+					: renderItem(n)}
 				${n.children?.map(child => render(child, newPath))}
 			</sl-tree-item>
 		`

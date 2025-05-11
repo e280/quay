@@ -1,28 +1,28 @@
 import {signal} from "@benev/slate"
 
 export class Dropzone {
-	readonly hovering = signal(false)
+	readonly dropTarget = signal<string | undefined | "quay-dropzone">(undefined)
+	onFilesDropped: (files: File[], folderId?: string) => void = () => {}
 
-	onFilesDropped: (files: File[]) => void = () => {}
-
-	dragenter = (e: DragEvent) => {
+	dragenter = (e: DragEvent, target?: string) => {
 		e.preventDefault()
-		this.hovering.value = true
+		this.dropTarget.value = target ?? "quay-dropzone"
 	}
 
 	dragleave = (e: DragEvent) => {
-		this.hovering.value = false
+		this.dropTarget.value = undefined
 	}
 
 	dragover = (e: DragEvent) => e.preventDefault()
 
 	drop = (e: DragEvent) => {
 		e.preventDefault()
-		this.hovering.value = false
 
 		const files = Array.from(e.dataTransfer?.files || [])
 		if (files.length)
-			this.onFilesDropped(files)
+			this.onFilesDropped(files, this.dropTarget.value)
+
+		this.dropTarget.value = undefined
 	}
 
 	change = (e: DragEvent) => {

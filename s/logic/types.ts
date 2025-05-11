@@ -12,7 +12,7 @@ type TreeItemBase = {
 }
 
 export type TreeItem = TreeItemBase & {
-	parentId: string | null
+	parentId: string | null | undefined
 }
 
 export type NestedTreeItem = TreeItemBase & {
