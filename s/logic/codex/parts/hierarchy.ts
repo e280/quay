@@ -2,7 +2,12 @@
 import {MapG} from "@e280/stz"
 import {Id} from "./types.js"
 
-/** tree of nestable things */
+/**
+ * Tree of nestable things.
+ *  - Things can have multiple children.
+ *  - Things can only have one parent.
+ *  - Things can be orphans (bring your own concept of a "root").
+ */
 export class Hierarchy {
 	#children = new MapG<Id, Set<Id>>()
 	#parents = new MapG<Id, Id>()

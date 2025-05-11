@@ -3,26 +3,39 @@ import {signal} from "@benev/slate"
 import {Codex} from "../codex.js"
 import {Id, Kind, Schema} from "./types.js"
 
-/** a codex item, ergonomic handle for items that have a taxon, specimen, and position in hierarchy */
-export class Item<Sc extends Schema, K extends Kind<Sc> = Kind<Sc>> {
+/**
+ * Codex Item
+ * 	- Quay's concept of a nestable thing.
+ * 	- ergonomic handle which consolidates taxonomy, clade, and hierarchy functionality.
+ */
+export class CodexItem<Sc extends Schema, K extends Kind<Sc> = Kind<Sc>> {
 	signal = signal(this)
 
 	constructor(
 		private codex: Codex<Sc>,
 		public id: Id,
-		public kind: K,
-		public taxon: Sc["taxon"],
-		public specimen: Sc["specimens"][K],
 	) {}
 
-	get parent(): Item<Sc> | undefined {
+	get kind(): K {
+		return this.codex.clade.query<K>(this.id).kind
+	}
+
+	get taxon(): Sc["taxon"] {
+		return this.codex.clade.query(this.id).taxon
+	}
+
+	get specimen(): Sc["specimens"][K] {
+		return this.codex.clade.query<K>(this.id).specimen
+	}
+
+	get parent(): CodexItem<Sc> | undefined {
 		const parent = this.codex.hierarchy.getParent(this.id)
 		return parent
-			? this.codex.require(parent) as Item<Sc>
+			? this.codex.require(parent) as CodexItem<Sc>
 			: undefined
 	}
 
-	add(...items: Item<Sc>[]) {
+	add(...items: CodexItem<Sc>[]) {
 		this.codex.hierarchy.insert(this.id, ...items.map(i => i.id))
 		this.signal.publish()
 		return this
@@ -44,7 +57,7 @@ export class Item<Sc extends Schema, K extends Kind<Sc> = Kind<Sc>> {
 		this.signal.publish()
 	}
 
-	*crawl(predicate: (item: Item<Sc>, path: Item<Sc>[]) => boolean = () => true) {
+	*crawl(predicate: (item: CodexItem<Sc>, path: CodexItem<Sc>[]) => boolean = () => true) {
 		const iterator = this.codex.hierarchy.crawl(
 			this.id,
 			(id, path) => predicate(
@@ -56,7 +69,7 @@ export class Item<Sc extends Schema, K extends Kind<Sc> = Kind<Sc>> {
 			yield [
 				this.codex.require(id),
 				path.map(id => this.codex.require(id)),
-			] as [Item<Sc>, Item<Sc>[]]
+			] as [CodexItem<Sc>, CodexItem<Sc>[]]
 	}
 }
 

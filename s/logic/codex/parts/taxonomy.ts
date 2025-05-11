@@ -2,7 +2,7 @@
 import {MapG} from "@e280/stz"
 import {Kind, Schema, Taxons} from "./types.js"
 
-/** each "kind" gets its own "taxon" data */
+/** Defines the static details about each "kind" of data */
 export class Taxonomy<Sc extends Schema> {
 	#taxons = new MapG<Kind<Sc>, Sc["taxon"]>()
 

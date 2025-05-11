@@ -1,10 +1,10 @@
 
 import {MapG} from "@e280/stz"
 
-import {Item} from "./parts/item.js"
 import {Clade} from "./parts/clade.js"
 import {Taxonomy} from "./parts/taxonomy.js"
 import {Hierarchy} from "./parts/hierarchy.js"
+import {CodexItem} from "./parts/codex-item.js"
 import {generateId} from "./utils/generate-id.js"
 import {Id, Schema, Taxons} from "./parts/types.js"
 
@@ -16,7 +16,7 @@ export class Codex<Sc extends Schema> {
 		return new this(clade, hierarchy)
 	}
 
-	#items = new MapG<Id, Item<Sc>>()
+	#items = new MapG<Id, CodexItem<Sc>>()
 
 	constructor(
 		public clade: Clade<Sc>,
@@ -25,19 +25,18 @@ export class Codex<Sc extends Schema> {
 
 	create<K extends keyof Sc["specimens"]>(kind: K, specimen: Sc["specimens"][K]) {
 		const id = generateId()
-		const taxon = this.clade.taxonomy.taxon(kind)
 		this.clade.setSpecimen(id, kind, specimen)
-		const item = new Item(this, id, kind, taxon, specimen)
+		const item = new CodexItem(this, id)
 		this.#items.set(id, item)
 		return item
 	}
 
-	root<I extends Item<Sc>>(item: I) {
+	root<I extends CodexItem<Sc>>(item: I) {
 		this.hierarchy.insertRoot(item.id)
 		return item
 	}
 
-	require(id: Id): Item<Sc> {
+	require(id: Id): CodexItem<Sc> {
 		return this.#items.require(id)
 	}
 }
