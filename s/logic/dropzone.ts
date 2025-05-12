@@ -1,28 +1,54 @@
-import {signal} from "@benev/slate"
+import {ShockDragDrop} from "@benev/slate"
+import {NestedTreeItem} from "./types.js"
 
 export class Dropzone {
-	readonly dropTarget = signal<string | undefined | "quay-dropzone">(undefined)
-	onFilesDropped: (files: File[], folderId?: string) => void = () => {}
+	#drag_drop = new ShockDragDrop<NestedTreeItem, NestedTreeItem>({handle_drop: (e, g, h) => {this.onDrop(g, h)}})
+	onDrop: (draggedItem: NestedTreeItem, targetId?: NestedTreeItem) => void = () => {}
+	onImport: (files: File[], folder?: NestedTreeItem) => void = () => {}
+
+	get grabbed() {
+	 return this.#drag_drop.grabbed
+	}
+
+	get hovering() {
+	 return this.#drag_drop.hovering
+	}
 
 	dragenter = (e: DragEvent, target?: string) => {
 		e.preventDefault()
-		this.dropTarget.value = target ?? "quay-dropzone"
 	}
 
 	dragleave = (e: DragEvent) => {
-		this.dropTarget.value = undefined
+		this.#drag_drop.dropzone.dragleave()(e)
 	}
 
-	dragover = (e: DragEvent) => e.preventDefault()
+	dragstart = (e: DragEvent, n: NestedTreeItem) => {
+		e.stopPropagation()
+		this.#drag_drop.dragzone.dragstart(n)(e)
+	}
 
-	drop = (e: DragEvent) => {
+	dragover = (e: DragEvent, n: NestedTreeItem) => {
 		e.preventDefault()
+		this.#drag_drop.dropzone.dragover(n)(e)
+	}
 
+	dragend = (e: DragEvent) => {
+		this.#drag_drop.dragzone.dragend()(e)
+	}
+
+	drop = (e: DragEvent, n: NestedTreeItem) => {
+		e.preventDefault()
 		const files = Array.from(e.dataTransfer?.files || [])
-		if (files.length)
-			this.onFilesDropped(files, this.dropTarget.value)
 
-		this.dropTarget.value = undefined
+		if (files.length) {
+			this.onImport(files, n)
+		}
+
+		const same = this.grabbed?.id === this.hovering?.id
+		const child = this.grabbed?.children.some(c => this.hovering?.id === c.id)
+
+		if(!same && !child)
+			this.#drag_drop.dropzone.drop(n)(e)
 	}
 
 	change = (e: DragEvent) => {
@@ -30,7 +56,7 @@ export class Dropzone {
 		const files = Array.from(input.files ?? [])
 
 		if (files.length) {
-			this.onFilesDropped(files)
+			this.onImport(files)
 		}
 	}
 }

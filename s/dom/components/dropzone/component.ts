@@ -8,7 +8,7 @@ export const QuayDropzone = shadowComponent(use => {
 	use.styles(theme, styles)
 
 	return html`
-		<div class="dropzone ${dropzone.dropTarget.value === "quay-dropzone" ? 'hovering' : ''}">
+		<div class="dropzone">
 			<input
 				type="file"
 				class="dz-input"

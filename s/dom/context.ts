@@ -31,22 +31,27 @@ export const context = new Quay()
 const now = Date.now()
 const id = (n: number) => `demo-${n}`
 
-context.dropzone.onFilesDropped = async (files, dropTarget) => {
+context.dropzone.onImport = ((files, folder) => {
 	for (const file of files) {
-		const targetItem = context.tree.getItem(dropTarget)
-		const isFolder = targetItem?.allowChildren
+		const children = context.tree.items.filter(item => item.parentId === folder?.id)
+		const rootItems = context.tree.items.filter(i => !i.parentId)
 		context.tree.create({
 			id: crypto.randomUUID(),
 			name: file.name,
-			parentId: !isFolder ? targetItem?.parentId : dropTarget,
+			parentId: folder?.id,
 			createdAt: Date.now(),
-			sortIndex: !isFolder ? (targetItem?.sortIndex ?? 0) : context.tree.items[context.tree.items.length - 1].sortIndex,
+			sortIndex: folder ? children[children.length - 1].sortIndex + 1 : rootItems[rootItems.length - 1].sortIndex + 1,
 			allowChildren: false,
 			meta: {
 				type: file.type.split("/")[0]
 			}
 		})
 	}
+})
+
+context.dropzone.onDrop = async (draggedItem, dropTarget) => {
+	const item = context.tree.getItem(draggedItem.id)
+	item!.parentId = dropTarget?.id
 }
 
 // demo
