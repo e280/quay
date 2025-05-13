@@ -56,6 +56,7 @@ export default css`
 			border: 2px solid #0D0D0E;
 			border-radius: 5px;
 			background: #0F0F11;
+			pointer-events: none;
 		}
 
 		.label {

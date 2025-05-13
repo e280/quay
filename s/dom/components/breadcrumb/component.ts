@@ -2,18 +2,15 @@ import {html, shadowComponent} from '@benev/slate'
 import {context} from '../../context.js'
 
 export const QuayBreadcrumb = shadowComponent(use => {
-	const {tree, schema, navigator} = context
+	const {mediaCodex, trail} = context
 
 	return html`
 		<sl-breadcrumb>
-			${navigator.path.value.map((id, idx) => html`
+			${trail.trail.value.map(item => html`
 				<sl-breadcrumb-item
-					@click=${() => {
-						const newPath = navigator.path.value.slice(0, idx + 1)
-						navigator.enter(newPath)
-					}}
+					@click=${(e: Event) => trail.setTrail(e, item)}
 				>
-					${id === null ? 'root' : schema.getLabel(tree.getItem(id)!)}
+					${item === null ? 'root' : mediaCodex.require(item.id).specimen.label}
 				</sl-breadcrumb-item>
 			`)}
 		</sl-breadcrumb>

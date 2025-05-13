@@ -1,9 +1,10 @@
 import {html, shadowView, TemplateResult, css} from "@benev/slate"
 import {context} from "../../context.js"
-import {TreeItem, NestedTreeItem} from "../../../logic/types.js"
+import {MediaSchema} from "../../../logic/types.js"
+import {CodexItem} from "../../../logic/codex/parts/codex-item.js"
 
 export const Tree = shadowView(use => () => {
-	const {tree, search, schema, navigator, dropzone} = context
+	const {dropzone, root, trail} = context
 
 	use.styles(context.theme, css`
 		sl-tree-item::part(expand-button) {
@@ -39,76 +40,51 @@ export const Tree = shadowView(use => () => {
 		}
 	`)
 
-	// build nested tree from flat tree
-	const buildNestedTree = (items: TreeItem[]): NestedTreeItem[] =>
-		items
-			.filter(i => i.parentId === null)
-			.map(root => collectDeep(root, items))
-			.filter(n => n !== null)
+	use.mount(() => {
+		const dispose = dropzone.onChange.sub(() => use.rerender())
+		return () => dispose()
+	})
 
-	const collectDeep = (node: TreeItem, items: TreeItem[]): NestedTreeItem | null => {
-		const children = items
-			.filter(i => i.parentId === node.id)
-			.map(child => collectDeep(child, items))
-			.filter(c => c !== null)
-
-		// const isLeaf = !node.allowChildren
-		const matchesLeaf = search.matches(node.name)
-		const hasMatchingDescendants = children.length > 0
-
-		if (!matchesLeaf && !hasMatchingDescendants)
-			return null
-
-		return {...node, children}
-	}
-
-	const enterFolder = (e: Event, n: NestedTreeItem, path: (string | null)[]) => {
-		if(n.allowChildren && e.target === e.currentTarget) {
-			navigator.enter(path)
-		}
-	}
-
-	const renderFolderItem = (n: NestedTreeItem) => html`
+	const renderFolderItem = (item: CodexItem<MediaSchema>) => html`
 		<input
 			@dragenter=${dropzone.dragenter}
 			@dragleave=${dropzone.dragleave}
-			@dragover=${(e: DragEvent) => {dropzone.dragover(e, n)}}
-			@drop=${(e: DragEvent) => {dropzone.drop(e, n)}}
+			@dragover=${(e: DragEvent) => dropzone.dragover(e, item)}
+			@drop=${(e: DragEvent) => dropzone.drop(e, item)}
 			@click=${(e: Event) => e.preventDefault()}
 			@change=${(e: Event) => console.log(e)}
 			id="file-import"
 			class="file-import folder-hover"
 		>
-		<sl-icon slot='expand-icon'   name='${schema.getIcon(n)}'></sl-icon>
-		<sl-icon slot='collapse-icon' name='${schema.getIcon(n, true)}'></sl-icon>
-		${n.name}
+		<sl-icon slot='expand-icon'   name='${item.taxon.icon}'></sl-icon>
+		<sl-icon slot='collapse-icon' name='${item.taxon.icon}'></sl-icon>
+		${item.specimen.label}
 	`
 
-	const renderItem = (n: NestedTreeItem) => html`
-		<sl-icon class='item' name='${schema.getIcon(n)}'></sl-icon>
-		${n.name}
+	const renderItem = (n: CodexItem<MediaSchema>) => html`
+		<sl-icon class='item' name='${n.taxon.icon}'></sl-icon>
+		${n.specimen.label}
 	`
-	const render = (n: NestedTreeItem, path: (string|null)[]): TemplateResult => {
-		const newPath = [...path, n.id]
+	const render = (item: CodexItem<MediaSchema>): TemplateResult => {
 		return html`
 			<sl-tree-item
 				draggable="true"
-				@dragstart=${(e: DragEvent) => dropzone.dragstart(e, n)}
+				@dragstart=${(e: DragEvent) => dropzone.dragstart(e, item)}
 				@dragend=${dropzone.dragend}
-				@click=${(e: Event) => enterFolder(e, n, newPath)}
-				data-type=${n.meta?.type}
-				?data-hover=${dropzone.hovering?.id === n.id}
+				@click=${(e: Event) => trail.setTrail(e, item)}
+				data-type=${item.kind}
+				?data-hover=${dropzone.hovering?.id === item.id}
 			>
-				${n.allowChildren
-					? renderFolderItem(n)
-					: renderItem(n)}
-				${n.children?.map(child => render(child, newPath))}
+				${item.kind === "folder"
+					? renderFolderItem(item)
+					: renderItem(item)}
+				${item.children.map(render)}
 			</sl-tree-item>
 		`
 	}
 
 	return html`
 		<sl-tree selection=leaf>
-			${buildNestedTree(tree.items).map(root => render(root, [null]))}
+			${render(root)}
 		</sl-tree>`
 })

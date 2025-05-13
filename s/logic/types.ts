@@ -1,27 +1,15 @@
+import {AsSchema, Taxon} from "./codex/parts/types.js"
+
 export type ItemType = 'video' | 'image' | 'audio' | string
 
-type TreeItemBase = {
-	id: string
-	name: string
-	createdAt: number
-	sortIndex: number
-	allowChildren: boolean
-	meta?: {
-		type?: ItemType
-	}
+export type Specimen = {
+	folder: {label: string}
+	video: {label: string}
+	image: {label: string}
+	audio: {label: string}
 }
 
-export type TreeItem = TreeItemBase & {
-	parentId: string | null | undefined
-}
-
-export type NestedTreeItem = TreeItemBase & {
-	children: NestedTreeItem[]
-}
-
-export interface QuaySchema<Item = any> {
-	getLabel(item: Item): string
-	getIcon(item: Item, open?: boolean): string
-	isFolder(item: Item): boolean
-	isVisible?(item: Item): boolean
-}
+export type MediaSchema = AsSchema<{
+	taxon: Taxon
+	specimens: Specimen
+}>

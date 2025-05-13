@@ -3,24 +3,23 @@ import styles from "./styles.js"
 import {context} from "../../context.js"
 
 export const QuayBrowser = shadowComponent(use => {
-	const {tree, search, theme, schema} = context
+	const {search, theme, trail} = context
 	const [viewMode, setViewMode] = use.state<'list' | 'details' | 'tiles' | 'content'>('tiles')
 
-	const getItems = () =>
-		tree.items.filter(item =>
-			!item.allowChildren && search.matches(item.name)
-		)
+	const getItems = () => {
+		return trail.currentFolder.filter(i => search.matches(i.specimen.label))
+	}
 
 	use.styles(theme, styles)
 
 	const renderTiles = () => html`
 		<div class="tiles">
 			${getItems().map(item => html`
-				<div class="item">
+				<div @click=${(e: Event) => trail.setTrail(e, item)} class="item">
 					<div class="media-icon">
-						<sl-icon name=${schema.getIcon(item)}></sl-icon>
+						<sl-icon name=${item.taxon.icon}></sl-icon>
 					</div>
-					<div class="label" title=${item.name}>${item.name}</div>
+					<div class="label" title=${item.specimen.label}>${item.specimen.label}</div>
 				</div>
 			`)}
 		</div>
@@ -29,11 +28,11 @@ export const QuayBrowser = shadowComponent(use => {
 	const renderList = () => html`
 		<div class="list">
 			${getItems().map(item => html`
-				<div class="item">
+				<div @click=${(e: Event) => trail.setTrail(e, item)} class="item">
 					<div class="media-icon">
-						<sl-icon name=${schema.getIcon(item)}></sl-icon>
+						<sl-icon name=${item.taxon.icon}></sl-icon>
 					</div>
-					<span>${item.name}</span>
+					<span>${item.specimen.label}</span>
 				</div>
 			`)}
 		</div>
@@ -42,10 +41,10 @@ export const QuayBrowser = shadowComponent(use => {
 	const renderDetails = () => html`
 		<div class="details">
 			${getItems().map(item => html`
-				<div class="row">
-					<sl-icon name=${schema.getIcon(item)}></sl-icon>
-					<span>${item.name}</span>
-					<span class=type>${item.meta?.type}</span>
+				<div @click=${(e: Event) => trail.setTrail(e, item)} class="row">
+					<sl-icon name=${item.taxon.icon}></sl-icon>
+					<span>${item.specimen.label}</span>
+					<span class=type>${item.kind}</span>
 				</div>
 			`)}
 		</div>
@@ -54,11 +53,11 @@ export const QuayBrowser = shadowComponent(use => {
 	const renderContent = () => html`
 		<div class="content">
 			${getItems().map(item => html`
-				<div class="card">
-					<sl-icon name=${schema.getIcon(item)}></sl-icon>
+				<div @click=${(e: Event) => trail.setTrail(e, item)} class="card">
+					<sl-icon name=${item.specimen.label}></sl-icon>
 					<div class=meta>
-						<div class=name>${item.name}</div>
-						<div class=type>${item.meta?.type}</div>
+						<div class=name>${item.specimen.label}</div>
+						<div class=type>${item.kind}</div>
 					</div>
 				</div>
 			`)}
