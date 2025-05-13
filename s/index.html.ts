@@ -15,9 +15,6 @@ export default template(async basic => {
 		title: "Quay",
 		css: "demo/main.css",
 		head: html`
-			<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@shoelace-style/shoelace@2.20.0/cdn/themes/dark.css" />
-			<!-- loading every sholeace component for now (should be cherry picked instead) --!>
-			<script type="module" src="https://cdn.jsdelivr.net/npm/@shoelace-style/shoelace@2.20.0/cdn/shoelace.js" ></script>
 			<link rel="icon" href="${favicon}"/>
 			<meta data-commit-hash="${hash}"/>
 
@@ -35,6 +32,10 @@ export default template(async basic => {
 				prodModulePath: await path.version.root("demo/main.bundle.min.js"),
 				importmapContent: await read_file("x/importmap.json"),
 			})}
+
+			<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@shoelace-style/shoelace@2.20.0/cdn/themes/dark.css" />
+			<!-- loading every sholeace component for now (should be cherry picked instead) --!>
+			<script type="module" src="https://cdn.jsdelivr.net/npm/@shoelace-style/shoelace@2.20.0/cdn/shoelace.js" ></script>
 		`,
 		body: html`
 			<header class=title>
