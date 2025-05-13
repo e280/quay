@@ -36,14 +36,14 @@ const types = codex.create("file", {label: "types.ts"})
 
 // we attach the folder as the root, and attach its children
 codex.root(folder)
-	.add(readme)
-	.add(changelog)
-	.add(src) // <-- this is the subfolder
+	.attach(readme)
+	.attach(changelog)
+	.attach(src) // <-- this is the subfolder
 
 // and we attach the subfolder items to it
 src
-	.add(index)
-	.add(types)
+	.attach(index)
+	.attach(types)
 
 	//                   we can crawl any folder!
 	//                                    👇

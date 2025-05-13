@@ -23,6 +23,7 @@ export class Codex<Sc extends Schema> {
 		public hierarchy: Hierarchy,
 	) {}
 
+	/** create an item, not yet added to hierarchy */
 	create<K extends keyof Sc["specimens"]>(kind: K, specimen: Sc["specimens"][K]) {
 		const id = generateId()
 		this.clade.setSpecimen(id, kind, specimen)
@@ -31,11 +32,13 @@ export class Codex<Sc extends Schema> {
 		return item.signal.value
 	}
 
+	/** add an item to the hierachy as a root root */
 	root<I extends CodexItem<Sc>>(item: I) {
-		this.hierarchy.insertRoot(item.id)
+		this.hierarchy.establishRoot(item.id)
 		return item.signal.value
 	}
 
+	/** get an item by its id */
 	require(id: Id): CodexItem<Sc> {
 		return this.#items.require(id).signal.value
 	}

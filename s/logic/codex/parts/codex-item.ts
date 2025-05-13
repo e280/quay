@@ -20,14 +20,17 @@ export class CodexItem<Sc extends Schema, K extends Kind<Sc> = Kind<Sc>> {
 		return this.codex.clade.query<K>(this.id).kind
 	}
 
+	/** get information about the type of entity */
 	get taxon(): Sc["taxon"] {
 		return this.codex.clade.query(this.id).taxon
 	}
 
+	/** get information about this specific entity */
 	get specimen(): Sc["specimens"][K] {
 		return this.codex.clade.query<K>(this.id).specimen
 	}
 
+	/** get this item's parent item, or undefined if it's not attached */
 	get parent(): CodexItem<Sc> | undefined {
 		const parent = this.codex.hierarchy.getParent(this.id)
 		return parent
@@ -35,33 +38,40 @@ export class CodexItem<Sc extends Schema, K extends Kind<Sc> = Kind<Sc>> {
 			: undefined
 	}
 
+	/** get an array of this item's children */
 	get children(): CodexItem<Sc>[] {
+		// TODO actually replace this with a children() iterator, could be a perf win for supermassive sets
 		return [...this.codex.hierarchy.getChildren(this.id)]
 			.map(id => this.codex.require(id))
 	}
 
-	add(...items: CodexItem<Sc>[]) {
-		this.codex.hierarchy.insert(this.id, ...items.map(i => i.id))
+	/** add items as children */
+	attach(...items: CodexItem<Sc>[]) {
+		this.codex.hierarchy.attach(this.id, ...items.map(i => i.id))
 		this.signal.publish()
 		return this
 	}
 
-	create<K extends keyof Sc["specimens"]>(kind: K, specimen: Sc["specimens"][K]) {
-		const item = this.codex.create(kind, specimen)
-		this.add(item)
-		return item
-	}
-
+	/** detach this item from the hierarchy completely */
 	detach() {
 		this.codex.hierarchy.detach(this.id)
 		this.signal.publish()
 	}
 
+	/** create a new item that will be a child */
+	create<K extends keyof Sc["specimens"]>(kind: K, specimen: Sc["specimens"][K]) {
+		const item = this.codex.create(kind, specimen)
+		this.attach(item)
+		return item
+	}
+
+	/** create a new item that will be a child */
 	destroy() {
 		this.codex.hierarchy.destroy(this.id)
 		this.signal.publish()
 	}
 
+	/** iterate over this item and all its descendants */
 	*crawl(predicate: (item: CodexItem<Sc>, path: CodexItem<Sc>[]) => boolean = () => true) {
 		const iterator = this.codex.hierarchy.crawl(
 			this.id,

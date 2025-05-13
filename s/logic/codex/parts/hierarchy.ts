@@ -24,6 +24,24 @@ export class Hierarchy {
 		return this.#parents.get(id)
 	}
 
+	/** establish an id as a root with no parents, but ready to accept children */
+	establishRoot(root: Id) {
+		this.#children.set(root, new Set())
+	}
+
+	/** give a parent some children  */
+	attach(parent: Id, ...children: Id[]) {
+		const siblings = this.getChildren(parent)
+		for (const childId of children) {
+			if (this.getParent(childId))
+				throw new Error(`child already has parent`)
+			siblings.add(childId)
+			this.#parents.set(childId, parent)
+			this.#children.set(childId, new Set())
+		}
+	}
+
+	/** detach this id from its parent in the hierarchy */
 	detach(id: Id) {
 		if (!this.has(id))
 			return undefined
@@ -35,6 +53,7 @@ export class Hierarchy {
 		}
 	}
 
+	/** destroy all relations associated with this id, and all its descendants */
 	destroy(id: Id) {
 		const tree = [...this.crawl(id)]
 		for (const [id] of tree) {
@@ -43,21 +62,7 @@ export class Hierarchy {
 		}
 	}
 
-	insertRoot(root: Id) {
-		this.#children.set(root, new Set())
-	}
-
-	insert(parent: Id, ...children: Id[]) {
-		const siblings = this.getChildren(parent)
-		for (const childId of children) {
-			if (this.getParent(childId))
-				throw new Error(`child already has parent`)
-			siblings.add(childId)
-			this.#parents.set(childId, parent)
-			this.#children.set(childId, new Set())
-		}
-	}
-
+	/** iterate over this id and all its descendants */
 	*crawl(id: Id, predicate: (id: Id, path: Id[]) => boolean = () => true) {
 		const todo: [Id, Id[]][] = [[id, []]]
 		const seen = new Set<Id>()
