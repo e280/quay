@@ -54,7 +54,7 @@ export const QuayBrowser = shadowComponent(use => {
 		<div class="content">
 			${getItems().map(item => html`
 				<div @click=${(e: Event) => trail.setTrail(e, item)} class="card">
-					<sl-icon name=${item.specimen.label}></sl-icon>
+					<sl-icon name=${item.taxon.icon}></sl-icon>
 					<div class=meta>
 						<div class=name>${item.specimen.label}</div>
 						<div class=type>${item.kind}</div>
