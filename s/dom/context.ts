@@ -32,22 +32,22 @@ const heroPng = context.mediaCodex.create("image", {label: "hero.png"})
 const enemyPng = context.mediaCodex.create("image", {label: "enemy.png"})
 
 context.mediaCodex.root(context.root)
-	.add(introVid)
-	.add(coverImg)
-	.add(audioFx)
-	.add(sprites)
+	.attach(introVid)
+	.attach(coverImg)
+	.attach(audioFx)
+	.attach(sprites)
 
-sprites.add(heroPng).add(enemyPng)
+sprites.attach(heroPng).attach(enemyPng)
 
 context.dropzone.onImport.sub((files, folder) => {
 	for(const file of files) {
 		const type = file.type.split("/")[0] as Kind<MediaSchema>
 		const item = context.mediaCodex.create(type, {label: file.name})
-		folder?.add(item)
+		folder?.attach(item)
 	}
 })
 
 context.dropzone.onDrop.sub((grabbedItem, targetFolder) => {
 	grabbedItem.detach()
-	targetFolder?.add(grabbedItem)
+	targetFolder?.attach(grabbedItem)
 })
