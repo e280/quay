@@ -35,6 +35,11 @@ export class CodexItem<Sc extends Schema, K extends Kind<Sc> = Kind<Sc>> {
 			: undefined
 	}
 
+	get children(): CodexItem<Sc>[] {
+		return [...this.codex.hierarchy.getChildren(this.id)]
+			.map(id => this.codex.require(id))
+	}
+
 	add(...items: CodexItem<Sc>[]) {
 		this.codex.hierarchy.insert(this.id, ...items.map(i => i.id))
 		this.signal.publish()
