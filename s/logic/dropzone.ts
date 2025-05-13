@@ -12,11 +12,11 @@ export class Dropzone {
 	onChange = pub()
 
 	get grabbed() {
-	 return this.#drag_drop.grabbed
+		return this.#drag_drop.grabbed
 	}
 
 	get hovering() {
-	 return this.#drag_drop.hovering
+		return this.#drag_drop.hovering
 	}
 
 	dragenter = (e: DragEvent, target?: string) => e.preventDefault()
@@ -45,8 +45,9 @@ export class Dropzone {
 
 		const same = this.grabbed?.id === this.hovering?.id
 		const child = this.grabbed?.children.some(c => this.hovering?.id === c.id)
+		const parent = this.grabbed?.parent?.id === this.hovering?.id
 
-		if(!same && !child)
+		if(!same && !child && !parent)
 			this.#drag_drop.dropzone.drop(n)(e)
 	}
 
