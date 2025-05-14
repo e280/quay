@@ -9,7 +9,7 @@ export const QuayBrowser = shadowComponent(use => {
 	const [viewMode, setViewMode] = use.state<'details' | 'tiles'>('tiles')
 
 	const getItems = () => {
-		return trail.currentFolder.filter(i => search.matches(i.specimen.label))
+		return trail.currentFolder.filter(item => search.matches(item))
 	}
 
 	use.styles(theme, styles)
