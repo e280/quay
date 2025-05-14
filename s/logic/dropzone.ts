@@ -1,6 +1,7 @@
 import {pub} from "@e280/stz"
-import {ShockDragDrop} from "@benev/slate"
+import {ShockDragDrop, signal} from "@benev/slate"
 import {MediaSchema} from "./types.js"
+import {context} from "../dom/context.js"
 import {CodexItem} from "./codex/parts/codex-item.js"
 
 type Item = CodexItem<MediaSchema>
@@ -11,17 +12,27 @@ export class Dropzone {
 	onDrop = pub<[grabbedItem: Item, targetFolder?: Item]>(() => this.onChange.pub())
 	onChange = pub()
 
+	// to make drop file to import ui work
+	#hovering = signal<Item | undefined>(undefined)
+
 	get grabbed() {
 		return this.#drag_drop.grabbed
 	}
 
 	get hovering() {
-		return this.#drag_drop.hovering
+		return this.#drag_drop.hovering ?? this.#hovering.value
 	}
 
-	dragenter = (e: DragEvent, target?: string) => e.preventDefault()
+	dragenter = (e: DragEvent, target?: Item) => {
+		e.preventDefault()
+		this.#drag_drop.dropzone.dragenter()(e)
+		this.#hovering.value = target
+	}
 
-	dragleave = (e: DragEvent) => this.#drag_drop.dropzone.dragleave()(e)
+	dragleave = (e: DragEvent) => {
+		this.#drag_drop.dropzone.dragleave()(e)
+		this.#hovering.value = undefined
+	}
 
 	dragstart = (e: DragEvent, n: Item) => {
 		e.stopPropagation()
@@ -33,14 +44,17 @@ export class Dropzone {
 		this.#drag_drop.dropzone.dragover(n)(e)
 	}
 
-	dragend = (e: DragEvent) => this.#drag_drop.dragzone.dragend()(e)
+	dragend = (e: DragEvent) => {
+		this.#drag_drop.dragzone.dragend()(e)
+		this.#hovering.value = undefined
+	}
 
-	drop = (e: DragEvent, n: Item) => {
+	drop = (e: DragEvent, target: Item) => {
 		e.preventDefault()
 		const files = Array.from(e.dataTransfer?.files || [])
 
 		if (files.length) {
-			this.onImport(files, n)
+			this.onImport(files, target)
 		}
 
 		const same = this.grabbed?.id === this.hovering?.id
@@ -48,7 +62,9 @@ export class Dropzone {
 		const parent = this.grabbed?.parent?.id === this.hovering?.id
 
 		if(!same && !child && !parent)
-			this.#drag_drop.dropzone.drop(n)(e)
+			this.#drag_drop.dropzone.drop(target)(e)
+
+		this.#hovering.value = undefined
 	}
 
 	change = (e: DragEvent) => {
@@ -56,7 +72,7 @@ export class Dropzone {
 		const files = Array.from(input.files ?? [])
 
 		if (files.length) {
-			this.onImport(files)
+			this.onImport(files, context.root)
 		}
 	}
 }

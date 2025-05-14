@@ -3,19 +3,19 @@ import styles from "./styles.js"
 import {context} from "../../context.js"
 
 export const QuayDropzone = shadowComponent(use => {
-	const {dropzone, theme} = context
+	const {dropzone, theme, root} = context
 
 	use.styles(theme, styles)
 
 	return html`
-		<div class="dropzone">
+		<div class="dropzone" ?data-hovering=${dropzone.hovering}>
 			<input
 				type="file"
 				class="dz-input"
 				@change=${dropzone.change}
-				@drop=${dropzone.drop}
-				@dragover=${dropzone.dragover}
-				@dragenter=${dropzone.dragenter}
+				@drop=${(e: DragEvent) => dropzone.drop(e, root)}
+				@dragover=${(e: DragEvent) => dropzone.dragover(e, root)}
+				@dragenter=${(e: DragEvent) => dropzone.dragenter(e, root)}
 				@dragleave=${dropzone.dragleave}
 			>
 			<div class=dz-info>
