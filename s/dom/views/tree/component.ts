@@ -47,12 +47,11 @@ export const Tree = shadowView(use => () => {
 
 	const renderFolderItem = (item: CodexItem<MediaSchema>) => html`
 		<input
-			@dragenter=${dropzone.dragenter}
+			@dragenter=${(e: DragEvent) => dropzone.dragenter(e, item)}
 			@dragleave=${dropzone.dragleave}
 			@dragover=${(e: DragEvent) => dropzone.dragover(e, item)}
 			@drop=${(e: DragEvent) => dropzone.drop(e, item)}
 			@click=${(e: Event) => e.preventDefault()}
-			@change=${(e: Event) => console.log(e)}
 			id="file-import"
 			class="file-import folder-hover"
 		>
