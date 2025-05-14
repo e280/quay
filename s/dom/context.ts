@@ -22,14 +22,15 @@ class Quay {
 
 export const context = new Quay()
 
-const introVid = context.mediaCodex.create("video", {label: "01‑introduction.mp4",})
-const coverImg = context.mediaCodex.create("image", {label: "cover.png"})
+const previewUrl = "/assets/preview.webp"
+const introVid = context.mediaCodex.create("video", {label: "01‑introduction.mp4", previewUrl})
+const coverImg = context.mediaCodex.create("image", {label: "cover.png", previewUrl})
 const audioFx = context.mediaCodex.create("audio", {label: "click.wav"})
 
 // sub folder
 const sprites = context.mediaCodex.create("folder", {label: "sprites"})
-const heroPng = context.mediaCodex.create("image", {label: "hero.png"})
-const enemyPng = context.mediaCodex.create("image", {label: "enemy.png"})
+const heroPng = context.mediaCodex.create("image", {label: "hero.png", previewUrl})
+const enemyPng = context.mediaCodex.create("image", {label: "enemy.png", previewUrl})
 
 context.mediaCodex.root(context.root)
 	.attach(introVid)

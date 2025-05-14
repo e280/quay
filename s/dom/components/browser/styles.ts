@@ -28,9 +28,7 @@ export default css`
 }
 
 .tiles,
-.list,
-.details,
-.content {
+.details {
 	padding: 0.5rem;
 }
 
@@ -57,6 +55,11 @@ export default css`
 			border-radius: 5px;
 			background: #0F0F11;
 			pointer-events: none;
+
+			img {
+				width: 100%;
+				height: 100%;
+			}
 		}
 
 		.label {
@@ -72,48 +75,7 @@ export default css`
 	}
 }
 
-.list {
-	.item {
-		display: flex;
-		align-items: center;
-		gap: 0.75rem;
-		padding: 0.4rem 0.6rem;
-		font-size: 0.85rem;
-		color: var(--sl-color-neutral-700);
-
-		.media-icon {
-			width: 40px;
-			height: 40px;
-			font-size: 1.25rem;
-			display: flex;
-			align-items: center;
-			justify-content: center;
-			border: 2px solid #0D0D0E;
-			border-radius: 5px;
-			background: #0F0F11;
-		}
-	}
-}
-
 .details {
-	.row {
-		display: flex;
-		gap: 1rem;
-		align-items: center;
-		padding: 0.4rem 0.8rem;
-		border-bottom: 1px solid var(--sl-color-neutral-0);
-		font-size: 0.85rem;
-		color: var(--sl-color-neutral-700);
-
-		.type {
-			margin-left: auto;
-			font-size: 0.75rem;
-			color: var(--sl-color-neutral-500);
-		}
-	}
-}
-
-.content {
 	.card {
 		display: flex;
 		gap: 1rem;
