@@ -14,9 +14,8 @@ export const QuaySearchbar = shadowComponent(use => {
 			pill
 			placeholder='Search'
 			clearable
-			value=${context.search.query.value}
 			@sl-input=${(e: CustomEvent) => {
-				context.search.query.value = (e.target as HTMLInputElement).value
+				// context.search.query.value = (e.target as HTMLInputElement).value
 			}}
 		>
 			<sl-icon name='search' slot='prefix'></sl-icon>

@@ -1,4 +1,5 @@
-import {AsSchema, Taxon} from "./codex/parts/types.js"
+import {CodexItem} from "./codex/parts/codex-item.js"
+import {AsSchema, Schema, Taxon} from "./codex/parts/types.js"
 
 export type ItemType = 'video' | 'image' | 'audio' | string
 
@@ -21,3 +22,5 @@ export type MediaSchema = AsSchema<{
 	taxon: Taxon
 	specimens: Specimen
 }>
+
+export type SearchFn<Sc extends Schema> = (item: CodexItem<Sc>) => boolean

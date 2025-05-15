@@ -1,18 +1,18 @@
 import {signal} from "@benev/slate"
-import {MediaSchema} from "./types.js"
+import {Schema} from "./codex/parts/types.js"
 import {CodexItem} from "./codex/parts/codex-item.js"
 
-export class TreeTrail {
-	readonly trail = signal<(CodexItem<MediaSchema>)[]>([])
+export class TreeTrail<Sc extends Schema> {
+	readonly trail = signal<(CodexItem<Sc>)[]>([])
 
-	constructor(root: CodexItem<MediaSchema>) {
+	constructor(root: CodexItem<Sc>) {
 		this.trail.value = [root]
 	}
 
-	setTrail(e: Event, item: CodexItem<MediaSchema>) {
+	setTrail(e: Event, item: CodexItem<Sc>) {
 		if (e.target !== e.currentTarget) return
 
-		const trail: CodexItem<MediaSchema>[] = []
+		const trail: CodexItem<Sc>[] = []
 
 		let cur = item.kind === "folder"
 			? item

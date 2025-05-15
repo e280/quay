@@ -5,11 +5,11 @@ import {MediaItem, MediaSchema} from "../../../logic/types.js"
 import {CodexItem} from "../../../logic/codex/parts/codex-item.js"
 
 export const QuayBrowser = shadowComponent(use => {
-	const {search, theme, trail} = context
+	const {theme, trail} = context
 	const [viewMode, setViewMode] = use.state<'details' | 'tiles'>('tiles')
 
 	const getItems = () => {
-		return trail.currentFolder.filter(item => search.matches(item))
+		return trail.currentFolder.filter(item => context.getCombinedFn("", ""))
 	}
 
 	use.styles(theme, styles)
