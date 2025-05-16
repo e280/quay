@@ -30,7 +30,7 @@ const search: (terms: string[], item: CodexItem<MediaSchema>) => boolean =
 
 export const context = new QuayBrain<MediaSchema>()
 
-const group = context.createGroup("media", {
+const group = context.createGroup("default", {
 	codex: mediaCodex,
 	filters,
 	search,
