@@ -1,36 +1,77 @@
-import {signal} from "@benev/slate"
+import {pub} from "@e280/stz"
+import {ShockDragDrop, signal} from "@benev/slate"
+import {MediaSchema} from "./types.js"
+import {CodexItem} from "./codex/parts/codex-item.js"
+
+type Item = CodexItem<MediaSchema>
 
 export class Dropzone {
-	readonly dropTarget = signal<string | undefined | "quay-dropzone">(undefined)
-	onFilesDropped: (files: File[], folderId?: string) => void = () => {}
+	#drag_drop = new ShockDragDrop<Item, Item>({handle_drop: (e, g, h) => {this.onDrop(g, h)}})
+	onImport = pub<[files: File[], targetFolder?: Item]>(() => this.onChange.pub())
+	onDrop = pub<[grabbedItem: Item, targetFolder?: Item]>(() => this.onChange.pub())
+	onChange = pub()
 
-	dragenter = (e: DragEvent, target?: string) => {
+	// to make drop file to import ui work
+	#hovering = signal<Item | undefined>(undefined)
+
+	get grabbed() {
+		return this.#drag_drop.grabbed
+	}
+
+	get hovering() {
+		return this.#drag_drop.hovering ?? this.#hovering.value
+	}
+
+	dragenter = (e: DragEvent, target?: Item) => {
 		e.preventDefault()
-		this.dropTarget.value = target ?? "quay-dropzone"
+		this.#drag_drop.dropzone.dragenter()(e)
+		this.#hovering.value = target
 	}
 
 	dragleave = (e: DragEvent) => {
-		this.dropTarget.value = undefined
+		this.#drag_drop.dropzone.dragleave()(e)
+		this.#hovering.value = undefined
 	}
 
-	dragover = (e: DragEvent) => e.preventDefault()
+	dragstart = (e: DragEvent, n: Item) => {
+		e.stopPropagation()
+		this.#drag_drop.dragzone.dragstart(n)(e)
+	}
 
-	drop = (e: DragEvent) => {
+	dragover = (e: DragEvent, n: Item) => {
 		e.preventDefault()
-
-		const files = Array.from(e.dataTransfer?.files || [])
-		if (files.length)
-			this.onFilesDropped(files, this.dropTarget.value)
-
-		this.dropTarget.value = undefined
+		this.#drag_drop.dropzone.dragover(n)(e)
 	}
 
-	change = (e: DragEvent) => {
+	dragend = (e: DragEvent) => {
+		this.#drag_drop.dragzone.dragend()(e)
+		this.#hovering.value = undefined
+	}
+
+	drop = (e: DragEvent, target: Item) => {
+		e.preventDefault()
+		const files = Array.from(e.dataTransfer?.files || [])
+
+		if (files.length) {
+			this.onImport(files, target)
+		}
+
+		const same = this.grabbed?.id === this.hovering?.id
+		const child = this.grabbed?.children.some(c => this.hovering?.id === c.id)
+		const parent = this.grabbed?.parent?.id === this.hovering?.id
+
+		if(!same && !child && !parent)
+			this.#drag_drop.dropzone.drop(target)(e)
+
+		this.#hovering.value = undefined
+	}
+
+	change = (e: DragEvent, targetFolder: Item) => {
 		const input = e.currentTarget as HTMLInputElement
 		const files = Array.from(input.files ?? [])
 
 		if (files.length) {
-			this.onFilesDropped(files)
+			this.onImport(files, targetFolder)
 		}
 	}
 }

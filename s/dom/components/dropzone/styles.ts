@@ -30,7 +30,7 @@ export default css`
 	background: var(--sl-color-gray-50);
 }
 
-.dropzone.hovering {
+.dropzone[data-hovering] {
 	background: var(--sl-color-gray-50);
 	border-color: var(--sl-color-primary-500);
 

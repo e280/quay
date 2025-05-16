@@ -1,11 +1,12 @@
 import {html, shadowView, TemplateResult, css} from "@benev/slate"
-import {context} from "../../context.js"
-import {TreeItem, NestedTreeItem} from "../../../logic/types.js"
+import {MediaSchema} from "../../../logic/types.js"
+import {QuayGroup} from "../../../logic/quay-group.js"
+import {CodexItem} from "../../../logic/codex/parts/codex-item.js"
 
-export const Tree = shadowView(use => () => {
-	const {tree, search, schema, navigator, dropzone} = context
+export const Tree = shadowView(use => (group: QuayGroup<MediaSchema>) => {
+	const {dropzone, root, trail, theme} = group
 
-	use.styles(context.theme, css`
+	use.styles(theme, css`
 		sl-tree-item::part(expand-button) {
 			rotate: none;
 		}
@@ -25,96 +26,64 @@ export const Tree = shadowView(use => () => {
 			width: 100%;
 		}
 
-		.folder-hover, .item-hover {
+		.folder-hover {
 			position: absolute;
 			width: 100%;
-			height: 30px;
+			height: 100%;
 			left: 0;
-
+			bottom: 0;
 		}
 
-		.item-hover[data-hover] {
-			border-bottom: 1px solid var(--sl-color-primary-600);
-		}
-
-		.folder-hover[data-hover] {
+		sl-tree-item[data-hover] {
 			border-radius: 5px;
 			border: 1px solid var(--sl-color-primary-600);
 		}
 	`)
 
-	// build nested tree from flat tree
-	const buildNestedTree = (items: TreeItem[]): NestedTreeItem[] =>
-		items
-			.filter(i => i.parentId === null)
-			.map(root => collectDeep(root, items))
-			.filter(n => n !== null)
+	use.mount(() => {
+		const dispose = dropzone.onChange.sub(() => use.rerender())
+		return () => dispose()
+	})
 
-	const collectDeep = (node: TreeItem, items: TreeItem[]): NestedTreeItem | null => {
-		const children = items
-			.filter(i => i.parentId === node.id)
-			.map(child => collectDeep(child, items))
-			.filter(c => c !== null)
-
-		// const isLeaf = !node.allowChildren
-		const matchesLeaf = search.matches(node.name)
-		const hasMatchingDescendants = children.length > 0
-
-		if (!matchesLeaf && !hasMatchingDescendants)
-			return null
-
-		return {...node, children}
-	}
-
-	const enterFolder = (e: Event, n: NestedTreeItem, path: (string | null)[]) => {
-		if(n.allowChildren && e.target === e.currentTarget) {
-			navigator.enter(path)
-		}
-	}
-
-	const dz = (n: NestedTreeItem) => html`
-		<div ?data-hover=${dropzone.dropTarget.value === n.id} class=${n.allowChildren ? "folder-hover" : "item-hover"}></div>
+	const renderFolderItem = (item: CodexItem<MediaSchema>) => html`
 		<input
-			@click=${(e: Event) => e.preventDefault()}
-			@dragenter=${(e: DragEvent) => dropzone.dragenter(e, n.id)}
+			@dragenter=${(e: DragEvent) => dropzone.dragenter(e, item)}
 			@dragleave=${dropzone.dragleave}
-			@dragover=${dropzone.dragover}
-			@drop=${dropzone.drop}
+			@dragover=${(e: DragEvent) => dropzone.dragover(e, item)}
+			@drop=${(e: DragEvent) => dropzone.drop(e, item)}
+			@click=${(e: Event) => e.preventDefault()}
 			id="file-import"
-			class="file-import"
+			class="file-import folder-hover"
 		>
+		<sl-icon slot='expand-icon'   name='${item.taxon.icon}'></sl-icon>
+		<sl-icon slot='collapse-icon' name='${item.taxon.icon}'></sl-icon>
+		${item.specimen.label}
 	`
 
-	const renderFolderItem = (n: NestedTreeItem) => html`
-		${dz(n)}
-		<sl-icon slot='expand-icon'   name='${schema.getIcon(n)}'></sl-icon>
-		<sl-icon slot='collapse-icon' name='${schema.getIcon(n, true)}'></sl-icon>
-		${n.name}
+	const renderItem = (n: CodexItem<MediaSchema>) => html`
+		<sl-icon class='item' name='${n.taxon.icon}'></sl-icon>
+		${n.specimen.label}
 	`
-
-	const renderItem = (n: NestedTreeItem) => html`
-		${dz(n)}
-		<sl-icon class='item' name='${schema.getIcon(n)}'></sl-icon>
-		${n.name}
-	`
-
-	const render = (n: NestedTreeItem, path: (string|null)[]): TemplateResult => {
-		const newPath = [...path, n.id]
+	const render = (item: CodexItem<MediaSchema>): TemplateResult => {
 		return html`
 			<sl-tree-item
-				@click=${(e: Event) => enterFolder(e, n, newPath)}
-				data-type=${n.meta?.type}
+				draggable="true"
+				@dragstart=${(e: DragEvent) => dropzone.dragstart(e, item)}
+				@dragend=${dropzone.dragend}
+				@click=${(e: Event) => trail.setTrail(e, item)}
+				data-type=${item.kind}
+				?data-hover=${dropzone.hovering?.id === item.id}
 			>
-				${n.allowChildren
-					? renderFolderItem(n)
-					: renderItem(n)}
-				${n.children?.map(child => render(child, newPath))}
+				${item.kind === "folder"
+					? renderFolderItem(item)
+					: renderItem(item)}
+				${item.children.map((item) => group.matches(item) ? render(item) : null)}
 			</sl-tree-item>
 		`
 	}
 
 	return html`
 		<sl-tree selection=leaf>
-			${buildNestedTree(tree.items).map(root => render(root, [null]))}
+			${render(root)}
 		</sl-tree>`
 })

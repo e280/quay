@@ -1,27 +1,35 @@
+import {Codex} from "./codex/codex.js"
+import {CodexItem} from "./codex/parts/codex-item.js"
+import {AsSchema, Schema, Taxon} from "./codex/parts/types.js"
+
 export type ItemType = 'video' | 'image' | 'audio' | string
 
-type TreeItemBase = {
-	id: string
-	name: string
-	createdAt: number
-	sortIndex: number
-	allowChildren: boolean
-	meta?: {
-		type?: ItemType
-	}
+export type Specimen = {
+	folder: Item
+	video: MediaItem
+	image: MediaItem
+	audio: Item
 }
 
-export type TreeItem = TreeItemBase & {
-	parentId: string | null | undefined
+export interface Item {
+	label: string
 }
 
-export type NestedTreeItem = TreeItemBase & {
-	children: NestedTreeItem[]
+export interface MediaItem extends Item {
+	previewUrl: string
 }
 
-export interface QuaySchema<Item = any> {
-	getLabel(item: Item): string
-	getIcon(item: Item, open?: boolean): string
-	isFolder(item: Item): boolean
-	isVisible?(item: Item): boolean
+export type MediaSchema = AsSchema<{
+	taxon: Taxon
+	specimens: Specimen
+}>
+
+export type SearchFn<Sc extends Schema> = (item: CodexItem<Sc>) => boolean
+
+export interface BrainConfig<Sc extends Schema> {
+	codex: Codex<Sc>
+	root: CodexItem<Sc>
+	defaultFilter: string
+	filters: Map<string, SearchFn<Sc>>
+	search: (terms: string[], item: CodexItem<Sc>) => boolean
 }
