@@ -1,15 +1,16 @@
 import {html, shadowComponent} from "@benev/slate"
 import styles from "./styles.js"
-import {context} from "../../context.js"
+import {useQuayGroup} from "../../utils/use-quay-group.js"
 import {MediaItem, MediaSchema} from "../../../logic/types.js"
 import {CodexItem} from "../../../logic/codex/parts/codex-item.js"
 
 export const QuayBrowser = shadowComponent(use => {
-	const {theme, trail} = context
+	const context = useQuayGroup(use)
+	const {trail, theme} = context
 	const [viewMode, setViewMode] = use.state<'details' | 'tiles'>('tiles')
 
 	const getItems = () => {
-		return trail.currentFolder.filter(item => context.getCombinedFn("", ""))
+		return trail.currentFolder.filter(item => context.matches(item))
 	}
 
 	use.styles(theme, styles)

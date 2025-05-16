@@ -1,12 +1,12 @@
 import {html, shadowView, TemplateResult, css} from "@benev/slate"
-import {context} from "../../context.js"
 import {MediaSchema} from "../../../logic/types.js"
+import {QuayGroup} from "../../../logic/quay-group.js"
 import {CodexItem} from "../../../logic/codex/parts/codex-item.js"
 
-export const Tree = shadowView(use => () => {
-	const {dropzone, root, trail} = context
+export const Tree = shadowView(use => (group: QuayGroup<MediaSchema>) => {
+	const {dropzone, root, trail, theme} = group
 
-	use.styles(context.theme, css`
+	use.styles(theme, css`
 		sl-tree-item::part(expand-button) {
 			rotate: none;
 		}
@@ -77,7 +77,7 @@ export const Tree = shadowView(use => () => {
 				${item.kind === "folder"
 					? renderFolderItem(item)
 					: renderItem(item)}
-				${item.children.map(render)}
+				${item.children.map((item) => group.matches(item) ? render(item) : null)}
 			</sl-tree-item>
 		`
 	}

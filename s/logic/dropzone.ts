@@ -1,7 +1,6 @@
 import {pub} from "@e280/stz"
 import {ShockDragDrop, signal} from "@benev/slate"
 import {MediaSchema} from "./types.js"
-import {context} from "../dom/context.js"
 import {CodexItem} from "./codex/parts/codex-item.js"
 
 type Item = CodexItem<MediaSchema>
@@ -67,12 +66,12 @@ export class Dropzone {
 		this.#hovering.value = undefined
 	}
 
-	change = (e: DragEvent) => {
+	change = (e: DragEvent, targetFolder: Item) => {
 		const input = e.currentTarget as HTMLInputElement
 		const files = Array.from(input.files ?? [])
 
 		if (files.length) {
-			this.onImport(files, context.root)
+			this.onImport(files, targetFolder)
 		}
 	}
 }

@@ -1,10 +1,9 @@
 import {html, shadowComponent} from "@benev/slate"
 import styles from "./styles.js"
-import {context} from "../../context.js"
+import {useQuayGroup} from "../../utils/use-quay-group.js"
 
 export const QuayDropzone = shadowComponent(use => {
-	const {dropzone, theme, root} = context
-
+	const {dropzone, theme, root} = useQuayGroup(use)
 	use.styles(theme, styles)
 
 	return html`
@@ -12,7 +11,7 @@ export const QuayDropzone = shadowComponent(use => {
 			<input
 				type="file"
 				class="dz-input"
-				@change=${dropzone.change}
+				@change=${(e: DragEvent) => dropzone.change(e, root)}
 				@drop=${(e: DragEvent) => dropzone.drop(e, root)}
 				@dragover=${(e: DragEvent) => dropzone.dragover(e, root)}
 				@dragenter=${(e: DragEvent) => dropzone.dragenter(e, root)}

@@ -1,3 +1,4 @@
+import {Codex} from "./codex/codex.js"
 import {CodexItem} from "./codex/parts/codex-item.js"
 import {AsSchema, Schema, Taxon} from "./codex/parts/types.js"
 
@@ -24,3 +25,11 @@ export type MediaSchema = AsSchema<{
 }>
 
 export type SearchFn<Sc extends Schema> = (item: CodexItem<Sc>) => boolean
+
+export interface BrainConfig<Sc extends Schema> {
+	codex: Codex<Sc>
+	root: CodexItem<Sc>
+	defaultFilter: string
+	filters: Map<string, SearchFn<Sc>>
+	search: (terms: string[], item: CodexItem<Sc>) => boolean
+}

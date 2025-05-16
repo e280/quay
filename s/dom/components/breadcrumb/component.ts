@@ -1,8 +1,8 @@
 import {html, shadowComponent} from '@benev/slate'
-import {context} from '../../context.js'
+import {useQuayGroup} from '../../utils/use-quay-group.js'
 
 export const QuayBreadcrumb = shadowComponent(use => {
-	const {codex, trail} = context
+	const {codex, trail} = useQuayGroup(use)
 
 	return html`
 		<sl-breadcrumb>

@@ -16,10 +16,21 @@ const filters = new Map<string, SearchFn<MediaSchema>>()
 	.set("video", item => item.kind === "video")
 	.set("audio", item => item.kind === "audio")
 
-const search = (terms: string[], item: CodexItem<MediaSchema>) =>
-	terms.some(term => item.specimen.label.toLowerCase().includes(term))
+const search: (terms: string[], item: CodexItem<MediaSchema>) => boolean =
+(terms, item) => {
+	const query = terms.join(" ").trim().toLowerCase()
+	if (query === "") return true
 
-export const context = new QuayBrain<MediaSchema>({
+	if (item.kind === "folder") {
+		return item.children.some(child => search(terms, child))
+	}
+
+	return item.specimen.label.toLowerCase().includes(query)
+}
+
+export const context = new QuayBrain<MediaSchema>()
+
+const group = context.createGroup("media", {
 	codex: mediaCodex,
 	filters,
 	search,
@@ -29,16 +40,16 @@ export const context = new QuayBrain<MediaSchema>({
 
 
 const previewUrl = "/assets/preview.webp"
-const introVid = context.codex.create("video", {label: "01‑introduction.mp4", previewUrl})
-const coverImg = context.codex.create("image", {label: "cover.png", previewUrl})
-const audioFx = context.codex.create("audio", {label: "click.wav"})
+const introVid = group.codex.create("video", {label: "01‑introduction.mp4", previewUrl})
+const coverImg = group.codex.create("image", {label: "cover.png", previewUrl})
+const audioFx = group.codex.create("audio", {label: "click.wav"})
 
 // sub folder
-const sprites = context.codex.create("folder", {label: "sprites"})
-const heroPng = context.codex.create("image", {label: "hero.png", previewUrl})
-const enemyPng = context.codex.create("image", {label: "enemy.png", previewUrl})
+const sprites = group.codex.create("folder", {label: "sprites"})
+const heroPng = group.codex.create("image", {label: "hero.png", previewUrl})
+const enemyPng = group.codex.create("image", {label: "enemy.png", previewUrl})
 
-context.codex.root(context.root)
+group.codex.root(group.root)
 	.attach(introVid)
 	.attach(coverImg)
 	.attach(audioFx)
@@ -46,15 +57,15 @@ context.codex.root(context.root)
 
 sprites.attach(heroPng).attach(enemyPng)
 
-context.dropzone.onImport.sub((files, folder) => {
+group.dropzone.onImport.sub((files, folder) => {
 	for(const file of files) {
 		const type = file.type.split("/")[0] as Kind<MediaSchema>
-		const item = context.codex.create(type, {label: file.name})
+		const item = group.codex.create(type, {label: file.name})
 		folder?.attach(item)
 	}
 })
 
-context.dropzone.onDrop.sub((grabbedItem, targetFolder) => {
+group.dropzone.onDrop.sub((grabbedItem, targetFolder) => {
 	grabbedItem.detach()
 	targetFolder?.attach(grabbedItem)
 })
