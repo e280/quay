@@ -41,6 +41,12 @@ export class MediaGroup extends Group<MediaSchema> {
 			codex.create("folder", {label: "project"})
 		)
 
+		const renderIcon = (item: CodexItem<MediaSchema>) => {
+			return item.isKind("file")
+				? formatIcons.require(item.specimen.format)
+				: item.taxon.icon
+		}
+
 		return {
 			codex,
 			root,
@@ -53,14 +59,14 @@ export class MediaGroup extends Group<MediaSchema> {
 					item.specimen.label.includes(term)
 				)) || search(terms, item)
 			},
+			renderIcon,
 			renderLabel: item => item.specimen.label,
-			renderIcon: item => item.isKind("file")
-				? formatIcons.require(item.specimen.format)
-				: item.taxon.icon,
 			renderPreview: (item: CodexItem<MediaSchema>) => {
 				return (item.isKind("file") && item.specimen.previewUrl)
 					? html`<img src=${item.specimen.previewUrl}>`
-					: html`<sl-icon name=${item.taxon.icon}></sl-icon>`
+					: renderIcon(item)
+					// // TODO icons
+					// : html`<sl-icon name=${item.taxon.icon}></sl-icon>`
 			},
 		}
 	}

@@ -36,7 +36,7 @@ export const QuayBrowser = shadowComponent(use => {
 		<div class="details">
 			${getItems().map(item => html`
 				<div @click=${(e: Event) => trail.setTrail(e, item)} class="card">
-					<sl-icon name=${item.taxon.icon}></sl-icon>
+					${config.renderIcon(item)}
 					<div class=meta>
 						<div class=name>${config.renderLabel(item)}</div>
 						<div class=type>${item.kind}</div>
@@ -45,6 +45,8 @@ export const QuayBrowser = shadowComponent(use => {
 			`)}
 		</div>
 	`
+	// // TODO icons
+	// <sl-icon name=${item.taxon.icon}></sl-icon>
 
 	return html`
 		<div class="toolbar">
