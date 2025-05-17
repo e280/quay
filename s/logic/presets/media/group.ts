@@ -3,10 +3,10 @@ import {MapG} from "@e280/stz"
 import {Content, html} from "@benev/slate"
 
 import {Group} from "../../group.js"
-import {GroupConfig, SearchFn} from "../../types.js"
 import {Codex} from "../../aspects/codex/codex.js"
+import {GroupConfig, SearchFn} from "../../types.js"
 import {MediaFormat, MediaSchema} from "./schema.js"
-import { CodexItem } from "../../aspects/codex/parts/codex-item.js"
+import {CodexItem} from "../../aspects/codex/parts/codex-item.js"
 
 export class MediaGroup extends Group<MediaSchema> {
 	static config = (): GroupConfig<MediaSchema> => {
