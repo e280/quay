@@ -56,7 +56,7 @@ export const Tree = shadowView(use => (group: Group) => {
 				${item.kind === "folder"
 					? renderFolderItem(item)
 					: renderItem(item)}
-				${item.children.map((item) => group.matches(item) ? render(item) : null)}
+				${group.sort(item.children).map((item) => group.matches(item) ? render(item) : null)}
 			</sl-tree-item>
 		`
 	}

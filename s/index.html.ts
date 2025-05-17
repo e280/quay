@@ -68,6 +68,16 @@ export default template(async basic => {
 					<quay-breadcrumb></quay-breadcrumb>
 				</div>
 
+				<div class="component filter">
+					<h4>quay-filter</h2>
+					<quay-filter></quay-filter>
+				</div>
+
+				<div class="component sort">
+					<h4>quay-sort</h2>
+					<quay-sort></quay-sort>
+				</div>
+
 				<div class="component browser">
 					<h4>quay-browser</h2>
 					<quay-browser></quay-browser>

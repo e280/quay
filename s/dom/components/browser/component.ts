@@ -14,7 +14,7 @@ export const QuayBrowser = shadowComponent(use => {
 	const [viewMode, setViewMode] = use.state<'details' | 'tiles'>('tiles')
 
 	const getItems = () => {
-		return trail.currentFolder.filter(item => group.matches(item)) as CodexItem[]
+		return group.sort(trail.currentFolder).filter(item => group.matches(item)) as CodexItem[]
 	}
 
 	const renderTiles = () => html`

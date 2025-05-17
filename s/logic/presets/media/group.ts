@@ -4,8 +4,8 @@ import {Content, html} from "@benev/slate"
 
 import {Group} from "../../group.js"
 import {Codex} from "../../aspects/codex/codex.js"
-import {GroupConfig, SearchFn} from "../../types.js"
 import {MediaFormat, MediaSchema} from "./schema.js"
+import {GroupConfig, SearchFn, SortFn} from "../../types.js"
 import {CodexItem} from "../../aspects/codex/parts/codex-item.js"
 
 export class MediaGroup extends Group<MediaSchema> {
@@ -20,6 +20,18 @@ export class MediaGroup extends Group<MediaSchema> {
 			.set("all", () => true)
 			.set("video", item => item.isKind("folder") || (item.isKind("file") && item.specimen.format === "video"))
 			.set("audio", item => item.isKind("folder") || (item.isKind("file") && item.specimen.format === "audio"))
+
+		const sorts = new Map<string, SortFn<MediaSchema>>()
+			.set("label", (a, b) => a.specimen.label.localeCompare(b.specimen.label))
+			.set("format", (a, b) => {
+				if (a.isKind("file") && b.isKind("file"))
+					return a.specimen.format.localeCompare(b.specimen.format)
+
+				if (a.isKind("file")) return -1
+				if (b.isKind("file")) return 1
+
+				return 0
+			})
 
 		const search: (terms: string[], item: CodexItem<MediaSchema>) => boolean = (terms, item) => {
 			const query = terms.join(" ").trim().toLowerCase()
@@ -50,8 +62,10 @@ export class MediaGroup extends Group<MediaSchema> {
 		return {
 			codex,
 			root,
+			sorts,
 			filters: filters,
 			defaultFilter: "all",
+			defaultSort: "label",
 			search: (terms, item) => {
 				return terms.some(term => (
 					item.kind.includes(term) ||
