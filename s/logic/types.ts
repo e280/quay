@@ -1,35 +1,19 @@
-import {Codex} from "./codex/codex.js"
-import {CodexItem} from "./codex/parts/codex-item.js"
-import {AsSchema, Schema, Taxon} from "./codex/parts/types.js"
 
-export type ItemType = 'video' | 'image' | 'audio' | string
-
-export type Specimen = {
-	folder: Item
-	video: MediaItem
-	image: MediaItem
-	audio: Item
-}
-
-export interface Item {
-	label: string
-}
-
-export interface MediaItem extends Item {
-	previewUrl: string
-}
-
-export type MediaSchema = AsSchema<{
-	taxon: Taxon
-	specimens: Specimen
-}>
+import {Codex} from "./aspects/codex/codex.js"
+import {Schema} from "./aspects/codex/parts/types.js"
+import {CodexItem} from "./aspects/codex/parts/codex-item.js"
+import { Content } from "@benev/slate"
 
 export type SearchFn<Sc extends Schema> = (item: CodexItem<Sc>) => boolean
 
-export interface BrainConfig<Sc extends Schema> {
+export interface GroupConfig<Sc extends Schema> {
 	codex: Codex<Sc>
 	root: CodexItem<Sc>
 	defaultFilter: string
 	filters: Map<string, SearchFn<Sc>>
 	search: (terms: string[], item: CodexItem<Sc>) => boolean
+	renderIcon: (item: CodexItem<Sc>) => Content
+	renderLabel: (item: CodexItem<Sc>) => Content
+	renderPreview: (item: CodexItem<Sc>) => Content
 }
+

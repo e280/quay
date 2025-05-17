@@ -1,14 +1,18 @@
+
 import {html, shadowComponent, css} from '@benev/slate'
-import {useQuayGroup} from '../../utils/use-quay-group.js'
+import themeCss from '../../theme.css.js'
+
+import {findLocalGroup} from '../../utils/find-local-group.js'
+
+const styleCss = css`
+	sl-input::part(prefix) {
+		padding-left: 0.5em;
+	}
+`
 
 export const QuaySearchbar = shadowComponent(use => {
-	const context = useQuayGroup(use)
-
-	use.styles(context.theme, css`
-		sl-input::part(prefix) {
-			padding-left: 0.5em;
-		}
-	`)
+	use.styles(themeCss, styleCss)
+	const group = findLocalGroup(use.element)
 
 	return html`
 		<sl-input
@@ -16,9 +20,10 @@ export const QuaySearchbar = shadowComponent(use => {
 			pill
 			placeholder='Search'
 			clearable
-			@sl-input=${(e: CustomEvent) => context.searchText.value = (e.target as HTMLInputElement).value}
+			@sl-input=${(e: CustomEvent) => group.searchText.value = (e.target as HTMLInputElement).value}
 		>
 			<sl-icon name='search' slot='prefix'></sl-icon>
 		</sl-input>
 	`
 })
+

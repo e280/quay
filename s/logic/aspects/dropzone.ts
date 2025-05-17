@@ -1,18 +1,19 @@
+
 import {pub} from "@e280/stz"
 import {ShockDragDrop, signal} from "@benev/slate"
-import {MediaSchema} from "./types.js"
 import {CodexItem} from "./codex/parts/codex-item.js"
 
-type Item = CodexItem<MediaSchema>
-
 export class Dropzone {
-	#drag_drop = new ShockDragDrop<Item, Item>({handle_drop: (e, g, h) => {this.onDrop(g, h)}})
-	onImport = pub<[files: File[], targetFolder?: Item]>(() => this.onChange.pub())
-	onDrop = pub<[grabbedItem: Item, targetFolder?: Item]>(() => this.onChange.pub())
+	#drag_drop = new ShockDragDrop<CodexItem, CodexItem>({
+		handle_drop: (_e, g, h) => {this.onDrop(g, h)}
+	})
+
+	onImport = pub<[files: File[], targetFolder?: CodexItem]>(() => this.onChange.pub())
+	onDrop = pub<[grabbedItem: CodexItem, targetFolder?: CodexItem]>(() => this.onChange.pub())
 	onChange = pub()
 
 	// to make drop file to import ui work
-	#hovering = signal<Item | undefined>(undefined)
+	#hovering = signal<CodexItem | undefined>(undefined)
 
 	get grabbed() {
 		return this.#drag_drop.grabbed
@@ -22,7 +23,7 @@ export class Dropzone {
 		return this.#drag_drop.hovering ?? this.#hovering.value
 	}
 
-	dragenter = (e: DragEvent, target?: Item) => {
+	dragenter = (e: DragEvent, target?: CodexItem) => {
 		e.preventDefault()
 		this.#drag_drop.dropzone.dragenter()(e)
 		this.#hovering.value = target
@@ -33,12 +34,12 @@ export class Dropzone {
 		this.#hovering.value = undefined
 	}
 
-	dragstart = (e: DragEvent, n: Item) => {
+	dragstart = (e: DragEvent, n: CodexItem) => {
 		e.stopPropagation()
 		this.#drag_drop.dragzone.dragstart(n)(e)
 	}
 
-	dragover = (e: DragEvent, n: Item) => {
+	dragover = (e: DragEvent, n: CodexItem) => {
 		e.preventDefault()
 		this.#drag_drop.dropzone.dragover(n)(e)
 	}
@@ -48,7 +49,7 @@ export class Dropzone {
 		this.#hovering.value = undefined
 	}
 
-	drop = (e: DragEvent, target: Item) => {
+	drop = (e: DragEvent, target: CodexItem) => {
 		e.preventDefault()
 		const files = Array.from(e.dataTransfer?.files || [])
 
@@ -66,7 +67,7 @@ export class Dropzone {
 		this.#hovering.value = undefined
 	}
 
-	change = (e: DragEvent, targetFolder: Item) => {
+	change = (e: DragEvent, targetFolder: CodexItem) => {
 		const input = e.currentTarget as HTMLInputElement
 		const files = Array.from(input.files ?? [])
 
@@ -75,3 +76,4 @@ export class Dropzone {
 		}
 	}
 }
+

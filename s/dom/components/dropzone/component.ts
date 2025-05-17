@@ -1,10 +1,16 @@
+
 import {html, shadowComponent} from "@benev/slate"
-import styles from "./styles.js"
-import {useQuayGroup} from "../../utils/use-quay-group.js"
+
+import styleCss from "./style.css.js"
+import themeCss from "../../theme.css.js"
+
+import {findLocalGroup} from "../../utils/find-local-group.js"
 
 export const QuayDropzone = shadowComponent(use => {
-	const {dropzone, theme, root} = useQuayGroup(use)
-	use.styles(theme, styles)
+	use.styles(themeCss, styleCss)
+
+	const group = findLocalGroup(use.element)
+	const {dropzone, config: {root}} = group
 
 	return html`
 		<div class="dropzone" ?data-hovering=${dropzone.hovering}>
@@ -24,3 +30,4 @@ export const QuayDropzone = shadowComponent(use => {
 		</div>
 	`
 })
+

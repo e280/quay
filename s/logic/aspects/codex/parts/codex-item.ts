@@ -8,7 +8,7 @@ import {Id, Kind, Schema} from "./types.js"
  * 	- Quay's concept of a nestable thing.
  * 	- ergonomic handle which consolidates taxonomy, clade, and hierarchy functionality.
  */
-export class CodexItem<Sc extends Schema, K extends Kind<Sc> = Kind<Sc>> {
+export class CodexItem<Sc extends Schema = any, K extends Kind<Sc> = Kind<Sc>> {
 	signal = signal(this)
 
 	constructor(
@@ -18,6 +18,10 @@ export class CodexItem<Sc extends Schema, K extends Kind<Sc> = Kind<Sc>> {
 
 	get kind(): K {
 		return this.codex.clade.query<K>(this.id).kind
+	}
+
+	isKind<K2 extends Kind<Sc>>(kind: K2): this is CodexItem<Sc, K2> {
+		return (kind as any === this.kind)
 	}
 
 	/** get information about the type of entity */

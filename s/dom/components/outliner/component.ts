@@ -1,13 +1,16 @@
+
 import {html, shadowComponent} from "@benev/slate"
+import themeCss from "../../theme.css.js"
 import {Tree} from "../../views/tree/component.js"
-import {useQuayGroup} from "../../utils/use-quay-group.js"
+import {findLocalGroup} from "../../utils/find-local-group.js"
 
 export const QuayOutliner = shadowComponent(use => {
-	const context = useQuayGroup(use)
-	use.styles(context.theme)
+	use.styles(themeCss)
+	const group = findLocalGroup(use.element)
 
 	return html`
 		<div class="panel">
-			${Tree([context])}
+			${Tree([group])}
 		</div>`
 })
+

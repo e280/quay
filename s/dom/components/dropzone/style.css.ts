@@ -1,6 +1,7 @@
-import {css} from "@benev/slate"
 
+import {css} from "@benev/slate"
 export default css`
+
 .dropzone {
 	width: 100%;
 	height: 100%;
@@ -48,4 +49,6 @@ export default css`
 	gap: 0.5em;
 	color: var(--sl-color-neutral-700);
 }
+
 `
+

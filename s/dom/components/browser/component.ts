@@ -1,35 +1,32 @@
 import {html, shadowComponent} from "@benev/slate"
-import styles from "./styles.js"
-import {useQuayGroup} from "../../utils/use-quay-group.js"
-import {MediaItem, MediaSchema} from "../../../logic/types.js"
-import {CodexItem} from "../../../logic/codex/parts/codex-item.js"
+
+import styleCss from "./style.css.js"
+import themeCss from "../../theme.css.js"
+
+import {findLocalGroup} from "../../utils/find-local-group.js"
+import {CodexItem} from "../../../logic/aspects/codex/parts/codex-item.js"
 
 export const QuayBrowser = shadowComponent(use => {
-	const context = useQuayGroup(use)
-	const {trail, theme} = context
+	use.styles(themeCss, styleCss)
+
+	const group = findLocalGroup(use.element)
+	const {trail, config} = group
 	const [viewMode, setViewMode] = use.state<'details' | 'tiles'>('tiles')
 
 	const getItems = () => {
-		return trail.currentFolder.filter(item => context.matches(item))
-	}
-
-	use.styles(theme, styles)
-
-	const preview = (item: CodexItem<MediaSchema>) => {
-		if(item.kind === "image" || item.kind === "video") {
-			const spec = item.specimen as MediaItem
-			return html`<img src=${spec.previewUrl}>`
-		} else return html`<sl-icon name=${item.taxon.icon}></sl-icon>`
+		return trail.currentFolder.filter(item => group.matches(item)) as CodexItem[]
 	}
 
 	const renderTiles = () => html`
 		<div class="tiles">
 			${getItems().map(item => html`
-				<div @click=${(e: Event) => trail.setTrail(e, item)} class="item">
+				<div class="item" @click="${(e: Event) => trail.setTrail(e, item)}">
 					<div class="media-icon">
-						${preview(item)}
+						${config.renderPreview(item) ?? config.renderIcon(item)}
 					</div>
-					<div class="label" title=${item.specimen.label}>${item.specimen.label}</div>
+					<div class="label" title="${config.renderLabel(item)}">
+						${config.renderLabel(item)}
+					</div>
 				</div>
 			`)}
 		</div>
@@ -41,7 +38,7 @@ export const QuayBrowser = shadowComponent(use => {
 				<div @click=${(e: Event) => trail.setTrail(e, item)} class="card">
 					<sl-icon name=${item.taxon.icon}></sl-icon>
 					<div class=meta>
-						<div class=name>${item.specimen.label}</div>
+						<div class=name>${config.renderLabel(item)}</div>
 						<div class=type>${item.kind}</div>
 					</div>
 				</div>
@@ -68,3 +65,4 @@ export const QuayBrowser = shadowComponent(use => {
 		${viewMode === 'details' ? renderDetails() : renderTiles()}
 	`
 })
+

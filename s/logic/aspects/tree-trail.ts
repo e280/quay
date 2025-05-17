@@ -3,10 +3,10 @@ import {Schema} from "./codex/parts/types.js"
 import {CodexItem} from "./codex/parts/codex-item.js"
 
 export class TreeTrail<Sc extends Schema> {
-	readonly trail = signal<(CodexItem<Sc>)[]>([])
+	readonly signal = signal<CodexItem<Sc>[]>([])
 
 	constructor(root: CodexItem<Sc>) {
-		this.trail.value = [root]
+		this.signal.value = [root]
 	}
 
 	setTrail(e: Event, item: CodexItem<Sc>) {
@@ -23,11 +23,11 @@ export class TreeTrail<Sc extends Schema> {
 			cur = cur.parent
 		}
 
-		this.trail.value = trail
+		this.signal.value = trail
 	}
 
 	get currentFolder() {
-		return this.trail.value.at(-1)?.children ?? []
+		return this.signal.value.at(-1)?.children ?? []
 	}
-
 }
+

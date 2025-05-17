@@ -1,6 +1,7 @@
-import {css} from "@benev/slate"
 
+import {css} from "@benev/slate"
 export default css`
+
 .toolbar {
 	display: flex;
 	justify-content: flex-end;
@@ -112,4 +113,6 @@ sl-tooltip {
 		color: var(--sl-color-neutral-700);
 	}
 }
+
 `
+
