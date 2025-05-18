@@ -17,7 +17,7 @@ export const QuayBreadcrumb = shadowComponent(use => {
 	return html`
 		<sl-breadcrumb>
 			${trail.signal.value.map(item => html`
-				<sl-breadcrumb-item @click="${click}">
+				<sl-breadcrumb-item @click="${click(item)}">
 					${item === null
 						? "root"
 						: renderLabel(codex.require(item.id))}
