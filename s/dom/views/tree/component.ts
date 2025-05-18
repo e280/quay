@@ -28,20 +28,15 @@ export const Tree = shadowView(use => (group: Group) => {
 			id="file-import"
 			class="file-import folder-hover"
 		>
-		<span slot=expand-icon>${config.renderIcon(item)}</span>
-		<span slot=collapse-icon>${config.renderIcon(item)}</span>
+		<span class="folder" slot="expand-icon">${config.renderIcon(item, false)}</span>
+		<span class="folder" slot="collapse-icon">${config.renderIcon(item, true)}</span>
 		${config.renderLabel(item)}
 	`
-	// // TODO icons
-	// <sl-icon slot='expand-icon'   name='${item.taxon.icon}'></sl-icon>
-	// <sl-icon slot='collapse-icon' name='${item.taxon.icon}'></sl-icon>
 
 	const renderItem = (item: CodexItem) => html`
-		${config.renderIcon(item)}
+		${config.renderIcon(item, false)}
 		${config.renderLabel(item)}
 	`
-	// // TODO icons
-	// <sl-icon class='item' name='${config.renderIcon(item)}'></sl-icon>
 
 	const render = (item: CodexItem): TemplateResult => {
 		return html`

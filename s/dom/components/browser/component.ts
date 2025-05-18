@@ -22,7 +22,7 @@ export const QuayBrowser = shadowComponent(use => {
 			${getItems().map(item => html`
 				<div class="item" @click="${(e: Event) => trail.setTrail(e, item)}">
 					<div class="media-icon">
-						${config.renderPreview(item) ?? config.renderIcon(item)}
+						${config.renderPreview(item) ?? config.renderIcon(item, false)}
 					</div>
 					<div class="label" title="${config.renderLabel(item)}">
 						${config.renderLabel(item)}
@@ -36,7 +36,7 @@ export const QuayBrowser = shadowComponent(use => {
 		<div class="details">
 			${getItems().map(item => html`
 				<div @click=${(e: Event) => trail.setTrail(e, item)} class="card">
-					${config.renderIcon(item)}
+					${config.renderIcon(item, false)}
 					<div class=meta>
 						<div class=name>${config.renderLabel(item)}</div>
 						<div class=type>${item.kind}</div>
