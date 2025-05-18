@@ -1,7 +1,7 @@
 
 import {Group} from "../../group.js"
 import {PlainSchema} from "./schema.js"
-import {GroupConfig} from "../../types.js"
+import {GroupConfig, SortFn} from "../../types.js"
 import {Codex} from "../../aspects/codex/codex.js"
 
 export class PlainGroup extends Group<PlainSchema> {
@@ -17,6 +17,9 @@ export class PlainGroup extends Group<PlainSchema> {
 		return {
 			codex,
 			root,
+			defaultSort: "id",
+			sorts: new Map<string, SortFn<PlainSchema>>()
+				.set("label", (a, b) => a.id.localeCompare(b.id)),
 			defaultFilter: "all",
 			filters: new Map()
 				.set("all", () => true),
