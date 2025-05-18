@@ -11,10 +11,10 @@ import {CodexItem} from "../../aspects/codex/parts/codex-item.js"
 export class MediaGroup extends Group<MediaSchema> {
 	static config = (): GroupConfig<MediaSchema> => {
 		const formatIcons = new MapG<MediaFormat, Content>()
-			.set("audio", "🎵")
-			.set("video", "📼")
-			.set("image", "🖼️")
-			.set("other", "📄")
+			.set("audio", html`<sl-icon name=music-note-beamed></sl-icon>`)
+			.set("video", html`<sl-icon name=film></sl-icon>`)
+			.set("image", html`<sl-icon name=image></sl-icon>`)
+			.set("other", html`<sl-icon name=file-earmark></sl-icon>`)
 
 		const filters = new Map<string, SearchFn<MediaSchema>>()
 			.set("all", () => true)
@@ -45,18 +45,18 @@ export class MediaGroup extends Group<MediaSchema> {
 		}
 
 		const codex = Codex.setup<MediaSchema>({
-			folder: {icon: "📁"},
-			file: {icon: "📄"},
+			folder: {icon: html`<sl-icon name="folder"></sl-icon>`},
+			file: {icon: html`<sl-icon name="file"></sl-icon>`},
 		})
 
 		const root = codex.root(
 			codex.create("folder", {label: "project"})
 		)
 
-		const renderIcon = (item: CodexItem<MediaSchema>) => {
+		const renderIcon = (item: CodexItem<MediaSchema>, opened: boolean) => {
 			return item.isKind("file")
 				? formatIcons.require(item.specimen.format)
-				: item.taxon.icon
+				: opened ? html`<sl-icon name="folder2-open"></sl-icon>` : item.taxon.icon
 		}
 
 		return {
@@ -78,7 +78,7 @@ export class MediaGroup extends Group<MediaSchema> {
 			renderPreview: (item: CodexItem<MediaSchema>) => {
 				return (item.isKind("file") && item.specimen.previewUrl)
 					? html`<img src=${item.specimen.previewUrl}>`
-					: renderIcon(item)
+					: renderIcon(item, false)
 					// // TODO icons
 					// : html`<sl-icon name=${item.taxon.icon}></sl-icon>`
 			},

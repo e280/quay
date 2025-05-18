@@ -15,7 +15,7 @@ export interface GroupConfig<Sc extends Schema> {
 	defaultSort: string
 	sorts: Map<string, SortFn<Sc>>
 	search: (terms: string[], item: CodexItem<Sc>) => boolean
-	renderIcon: (item: CodexItem<Sc>) => Content
+	renderIcon: (item: CodexItem<Sc>, opened: boolean) => Content
 	renderLabel: (item: CodexItem<Sc>) => Content
 	renderPreview: (item: CodexItem<Sc>) => Content
 }
