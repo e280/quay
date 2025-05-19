@@ -2,6 +2,7 @@
 import {MapG} from "@e280/stz"
 import {Content, html} from "@benev/slate"
 
+import Quay from "../../../index.js"
 import {Group} from "../../group.js"
 import {Codex} from "../../aspects/codex/codex.js"
 import {MediaFormat, MediaSchema} from "./schema.js"
@@ -82,6 +83,18 @@ export class MediaGroup extends Group<MediaSchema> {
 					// // TODO icons
 					// : html`<sl-icon name=${item.taxon.icon}></sl-icon>`
 			},
+			permissions: async item => Quay.permissions.all,
+			actions: {
+				newFolder: async parent => {},
+				move: async (item, target) => {},
+				delete: async item => {},
+				rename: async (item, newName) => {},
+				upload: async (files, target) => {},
+				search: async terms => {
+					return []
+				},
+				refresh: async () => {},
+			}
 		}
 	}
 

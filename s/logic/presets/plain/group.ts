@@ -1,4 +1,5 @@
 
+import Quay from "../../../index.js"
 import {Group} from "../../group.js"
 import {PlainSchema} from "./schema.js"
 import {GroupConfig, SortFn} from "../../types.js"
@@ -32,6 +33,18 @@ export class PlainGroup extends Group<PlainSchema> {
 			renderLabel: item => item.id,
 			renderIcon: item => item.taxon.icon,
 			renderPreview: () => null,
+			permissions: async item => Quay.permissions.all,
+			actions: {
+				newFolder: async parent => {},
+				move: async (item, target) => {},
+				delete: async item => {},
+				rename: async (item, newName) => {},
+				upload: async (files, target) => {},
+				search: async terms => {
+					return []
+				},
+				refresh: async () => {},
+			}
 		}
 	}
 

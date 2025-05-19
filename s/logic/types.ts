@@ -1,4 +1,5 @@
 
+import {Permission} from "./permissions.js"
 import {Codex} from "./aspects/codex/codex.js"
 import {Schema} from "./aspects/codex/parts/types.js"
 import {CodexItem} from "./aspects/codex/parts/codex-item.js"
@@ -18,5 +19,16 @@ export interface GroupConfig<Sc extends Schema> {
 	renderIcon: (item: CodexItem<Sc>, opened: boolean) => Content
 	renderLabel: (item: CodexItem<Sc>) => Content
 	renderPreview: (item: CodexItem<Sc>) => Content
+	permissions: (item: CodexItem<Sc>) => Promise<Permission>
+	actions: GroupActions<Sc>
 }
 
+export interface GroupActions<Sc extends Schema> {
+	newFolder: (parent: CodexItem<Sc>) => Promise<void>
+	move: (item: CodexItem<Sc>, target: CodexItem<Sc>) => Promise<void>
+	delete: (item: CodexItem<Sc>) => Promise<void>
+	rename: (item: CodexItem<Sc>, newName: string) => Promise<void>
+	upload: (files: File[], target: CodexItem<Sc>) => Promise<void>
+	search: (terms: string[]) => Promise<CodexItem<Sc>[]>
+	refresh: () => Promise<void>
+}
