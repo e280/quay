@@ -1,16 +1,23 @@
 
 import {pub} from "@e280/stz"
 import {ShockDragDrop, signal} from "@benev/slate"
+
+import {Group} from "../group.js"
 import {CodexItem} from "./codex/parts/codex-item.js"
 
 export class Dropzone {
 	#drag_drop = new ShockDragDrop<CodexItem, CodexItem>({
-		handle_drop: (_e, g, h) => {this.onDrop(g, h)}
+		handle_drop: (_e, grabbed, hovering) => {
+			this.group.move(grabbed, hovering)
+			// this.group.on.dragDrop.pub({grabbed, hovering})
+		}
 	})
 
-	onImport = pub<[files: File[], targetFolder?: CodexItem]>(() => this.onChange.pub())
-	onDrop = pub<[grabbedItem: CodexItem, targetFolder?: CodexItem]>(() => this.onChange.pub())
+	// onImport = pub<[files: File[], targetFolder?: CodexItem]>(() => this.onChange.pub())
+	// onDrop = pub<[grabbedItem: CodexItem, targetFolder?: CodexItem]>(() => this.onChange.pub())
 	onChange = pub()
+
+	constructor(private group: Group) {}
 
 	// to make drop file to import ui work
 	#hovering = signal<CodexItem | undefined>(undefined)
@@ -54,7 +61,7 @@ export class Dropzone {
 		const files = Array.from(e.dataTransfer?.files || [])
 
 		if (files.length) {
-			this.onImport(files, target)
+			this.group.upload(files, target)
 		}
 
 		const same = this.grabbed?.id === this.hovering?.id
@@ -72,7 +79,7 @@ export class Dropzone {
 		const files = Array.from(input.files ?? [])
 
 		if (files.length) {
-			this.onImport(files, targetFolder)
+			this.group.upload(files, targetFolder)
 		}
 	}
 }

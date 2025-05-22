@@ -19,16 +19,15 @@ export interface GroupConfig<Sc extends Schema> {
 	renderIcon: (item: CodexItem<Sc>, opened: boolean) => Content
 	renderLabel: (item: CodexItem<Sc>) => Content
 	renderPreview: (item: CodexItem<Sc>) => Content
-	permissions: (item: CodexItem<Sc>) => Promise<Permission>
-	actions: GroupActions<Sc>
+	permissions: (item: CodexItem<Sc>) => Permission
 }
 
-export interface GroupActions<Sc extends Schema> {
-	newFolder: (parent: CodexItem<Sc>) => Promise<void>
-	move: (item: CodexItem<Sc>, target: CodexItem<Sc>) => Promise<void>
-	delete: (item: CodexItem<Sc>) => Promise<void>
-	rename: (item: CodexItem<Sc>, newName: string) => Promise<void>
-	upload: (files: File[], target: CodexItem<Sc>) => Promise<void>
-	search: (terms: string[]) => Promise<CodexItem<Sc>[]>
-	refresh: () => Promise<void>
-}
+// export interface GroupActions<Sc extends Schema> {
+// 	newFolder: (parent: CodexItem<Sc>) => Promise<void>
+// 	move: (item: CodexItem<Sc>, target: CodexItem<Sc>) => Promise<void>
+// 	delete: (item: CodexItem<Sc>) => Promise<void>
+// 	rename: (item: CodexItem<Sc>, newName: string) => Promise<void>
+// 	upload: (files: File[], target: CodexItem<Sc>) => Promise<void>
+// 	search: (terms: string[]) => Promise<CodexItem<Sc>[]>
+// 	refresh: () => Promise<void>
+// }

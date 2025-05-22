@@ -27,17 +27,13 @@ codex.root(root)
 
 sprites.attach(heroPng).attach(enemyPng)
 
-group.dropzone.onImport.sub((files, folder) => {
-	for(const file of files) {
-		const type = file.type.split("/")[0] as Kind<MediaSchema>
-		const item = codex.create(type, {label: file.name})
-		folder?.attach(item)
-	}
-})
-
-group.dropzone.onDrop.sub((grabbedItem, targetFolder) => {
-	grabbedItem.detach()
-	targetFolder?.attach(grabbedItem)
+group.on.upload.sub(({files, target}) => {
+	// those stuff could be in upload action itself ?
+	// for(const file of files) {
+	// 	const type = file.type.split("/")[0] as Kind<MediaSchema>
+	// 	const item = codex.create(type, {label: file.name})
+	// 	target?.attach(item)
+	// }
 })
 
 setShoelaceDarkTheme()

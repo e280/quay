@@ -83,18 +83,7 @@ export class MediaGroup extends Group<MediaSchema> {
 					// // TODO icons
 					// : html`<sl-icon name=${item.taxon.icon}></sl-icon>`
 			},
-			permissions: async item => Quay.permissions.all,
-			actions: {
-				newFolder: async parent => {},
-				move: async (item, target) => {},
-				delete: async item => {},
-				rename: async (item, newName) => {},
-				upload: async (files, target) => {},
-				search: async terms => {
-					return []
-				},
-				refresh: async () => {},
-			}
+			permissions: item => Quay.permissions.all,
 		}
 	}
 

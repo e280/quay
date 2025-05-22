@@ -5,7 +5,7 @@ enum PermissionKey {
 	refresh = "refresh",
 	newFolder = "newFolder",
 	search = "search",
-	dragAndDrop = "dragAndDrop"
+	upload = "upload"
 }
 
 export type Permission = {
