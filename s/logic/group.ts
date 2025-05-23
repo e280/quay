@@ -87,12 +87,6 @@ export class Group<Sc extends Schema = any> {
 		if(!this.permissions(folder).upload)
 			throw new Error("upload permission not granted")
 
-		// for(const file of files) {
-		// 	const type = file.type.split("/")[0]
-		// 	const item = this.config.root.create(type, {label: file.name})
-		// 	folder.attach(item)
-		// }
-
 		this.on.upload.pub({files, target: folder})
 	}
 

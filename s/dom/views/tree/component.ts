@@ -14,7 +14,7 @@ export const Tree = shadowView(use => (group: Group) => {
 	const {dropzone, trail, config: {root}} = group
 
 	use.mount(() => {
-		const dispose = dropzone.onChange.sub(() => use.rerender())
+		const dispose = group.on.upload.sub(() => use.rerender())
 		return () => dispose()
 	})
 

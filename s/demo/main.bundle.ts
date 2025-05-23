@@ -1,9 +1,8 @@
 
 import {register} from "@benev/slate"
 import {brain} from "../dom/context.js"
-import {Kind} from "../logic/aspects/codex/parts/types.js"
 import {MediaGroup} from "../logic/presets/media/group.js"
-import {MediaSchema} from "../logic/presets/media/schema.js"
+import {MediaFormat} from "../logic/presets/media/schema.js"
 import {components, setShoelaceDarkTheme} from "../dom/components.js"
 
 const group = brain.setGroup("default", new MediaGroup())
@@ -28,12 +27,11 @@ codex.root(root)
 sprites.attach(heroPng).attach(enemyPng)
 
 group.on.upload.sub(({files, target}) => {
-	// those stuff could be in upload action itself ?
-	// for(const file of files) {
-	// 	const type = file.type.split("/")[0] as Kind<MediaSchema>
-	// 	const item = codex.create(type, {label: file.name})
-	// 	target?.attach(item)
-	// }
+	for(const file of files) {
+		const format = file.type.split("/")[0] as MediaFormat
+		const item = codex.create("file", {label: file.name, format, previewUrl})
+		target.attach(item)
+	}
 })
 
 setShoelaceDarkTheme()

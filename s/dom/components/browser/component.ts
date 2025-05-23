@@ -13,6 +13,11 @@ export const QuayBrowser = shadowComponent(use => {
 	const {trail, config} = group
 	const [viewMode, setViewMode] = use.state<'details' | 'tiles'>('tiles')
 
+	use.mount(() => {
+		const dispose = group.on.upload.sub(() => use.rerender())
+		return () => dispose()
+	})
+
 	const getItems = () => {
 		return group.sort(trail.currentFolder).filter(item => group.matches(item)) as CodexItem[]
 	}
