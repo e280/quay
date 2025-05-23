@@ -1,5 +1,3 @@
-
-import {pub} from "@e280/stz"
 import {ShockDragDrop, signal} from "@benev/slate"
 
 import {Group} from "../group.js"
@@ -7,15 +5,8 @@ import {CodexItem} from "./codex/parts/codex-item.js"
 
 export class Dropzone {
 	#drag_drop = new ShockDragDrop<CodexItem, CodexItem>({
-		handle_drop: (_e, grabbed, hovering) => {
-			this.group.move(grabbed, hovering)
-			// this.group.on.dragDrop.pub({grabbed, hovering})
-		}
+		handle_drop: (_e, grabbed, hovering) => this.group.move(grabbed, hovering)
 	})
-
-	// onImport = pub<[files: File[], targetFolder?: CodexItem]>(() => this.onChange.pub())
-	// onDrop = pub<[grabbedItem: CodexItem, targetFolder?: CodexItem]>(() => this.onChange.pub())
-	onChange = pub()
 
 	constructor(private group: Group) {}
 
