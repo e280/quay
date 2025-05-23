@@ -12,7 +12,7 @@ export class PlainGroup extends Group<PlainSchema> {
 		})
 
 		const root = codex.root(
-			codex.create("item", {})
+			codex.create("item", {label: "root"})
 		)
 
 		return {

@@ -7,7 +7,9 @@ export type PlainSchema = AsSchema<{
 		icon: Content
 	}
 	specimens: {
-		item: {}
+		item: {
+			label: string
+		}
 	}
 }>
 

@@ -7,7 +7,9 @@ export type Taxon = {
 	icon: Content
 }
 
-export type Specimens = {[key: string]: {}}
+export type Specimen = {label: string}
+
+export type Specimens = {[key: string]: Specimen}
 export type AsSpecimens<S extends Specimens> = S
 
 export type Schema = {
