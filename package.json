@@ -11,8 +11,8 @@
 		"s"
 	],
 	"dependencies": {
-		"@benev/slate": "^0.3.4",
-		"@e280/stz": "^0.0.0-18"
+		"@benev/slate": "^0.3.5",
+		"@e280/stz": "^0.0.0-22"
 	},
 	"devDependencies": {
 		"@benev/turtle": "^0.6.12",
