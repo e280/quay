@@ -31,7 +31,8 @@
 		"_turtlewatch": "turtle watch --in=s,x --out=x -v",
 		"_ln": "run-s _ln:s _ln:assets",
 		"_ln:s": "ln -s \"$(realpath s)\" x/s",
-		"_ln:assets": "ln -s \"$(realpath assets)\" x/assets"
+		"_ln:assets": "ln -s \"$(realpath assets)\" x/assets",
+		"count": "find s -path '*/_archive' -prune -o -name '*.ts' -exec wc -l {} +"
 	},
 	"keywords": [
 		"opfs",
