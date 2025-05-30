@@ -1,9 +1,11 @@
 import {sub} from "@e280/stz"
 import {signal} from "@benev/slate"
+
+import {Permission} from "./permissions.js"
 import {Dropzone} from "./aspects/dropzone.js"
-import {GroupConfig, SearchFn, SortFn} from "./types.js"
 import {TreeTrail} from "./aspects/tree-trail.js"
 import {Schema} from "./aspects/codex/parts/types.js"
+import {GroupConfig, SearchFn, SortFn} from "./types.js"
 import {CodexItem} from "./aspects/codex/parts/codex-item.js"
 
 export class Group<Sc extends Schema = any> {
@@ -30,7 +32,7 @@ export class Group<Sc extends Schema = any> {
 	}
 
 	get permissions() {
-		return this.config.permissions
+		return this.config.permissions as (item: CodexItem) => Permission
 	}
 
 	getFilterFn(filterKey: string): SearchFn<Sc> {

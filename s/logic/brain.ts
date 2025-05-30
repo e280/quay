@@ -8,7 +8,7 @@ import {Group} from "./group.js"
  *  - each group is a different hierarchy, which can have unique types and stuff
  */
 export class Brain {
-	#groups = new MapG<string, Group<any>>()
+	#groups = new MapG<string, Group>()
 
 	setGroup<G extends Group>(name: string, group: G) {
 		this.#groups.set(name, group)

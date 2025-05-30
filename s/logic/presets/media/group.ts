@@ -9,7 +9,7 @@ import {MediaFormat, MediaSchema} from "./schema.js"
 import {GroupConfig, SearchFn, SortFn} from "../../types.js"
 import {CodexItem} from "../../aspects/codex/parts/codex-item.js"
 
-export class MediaGroup extends Group<MediaSchema> {
+export class MediaGroup extends Group<MediaSchema> implements Group {
 	static config = (): GroupConfig<MediaSchema> => {
 		const formatIcons = new MapG<MediaFormat, Content>()
 			.set("audio", html`<sl-icon name=music-note-beamed></sl-icon>`)
