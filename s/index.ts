@@ -1,6 +1,8 @@
 
 export {register, css} from "@benev/slate"
 
+export * from "./cellar/index.js"
+
 export * from "./dom/components.js"
 import {Permissions} from "./logic/permissions.js"
 
@@ -9,3 +11,4 @@ const Quay = {
 }
 
 export default Quay
+
