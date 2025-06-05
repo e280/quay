@@ -1,7 +1,7 @@
 
-# 🛢️ Cask
+# ⚡ Turbo
 
-**Cask** is a turbocharger for reading and writing files in [OPFS](https://developer.mozilla.org/en-US/docs/Web/API/File_System_API/Origin_private_file_system).
+**Turbo** is a turbocharger for reading and writing files in [OPFS](https://developer.mozilla.org/en-US/docs/Web/API/File_System_API/Origin_private_file_system).
 
 It provides high-performance multithreaded low-level read/write access by automatically scheduling parallel tasks across a pool of web workers.
 
