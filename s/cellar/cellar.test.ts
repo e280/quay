@@ -61,5 +61,40 @@ export default Science.suite({
 
 		await expect(async() => cellar.load(fakeHash)).throwsAsync()
 	}),
+
+	"list returns saved hashes": test(async() => {
+		const cellar = new Cellar()
+		const texts = ["a", "b", "c"]
+
+		for (const t of texts)
+			await cellar.save(Txt.toBytes(t))
+
+		const hashes = []
+		for await (const hash of cellar.list())
+			hashes.push(hash)
+
+		expect(hashes.length).is(3)
+		for (const t of texts) {
+			const h = await Cask.hash(Txt.toBytes(t))
+			expect(hashes.includes(h)).is(true)
+		}
+	}),
+
+	"clear removes all entries": test(async() => {
+		const cellar = new Cellar()
+		await cellar.save(Txt.toBytes("one"))
+		await cellar.save(Txt.toBytes("two"))
+		await cellar.save(Txt.toBytes("three"))
+
+		let count = 0
+		for await (const _ of cellar.list()) count++
+		expect(count).is(3)
+
+		await cellar.clear()
+
+		let postClearCount = 0
+		for await (const _ of cellar.list()) postClearCount++
+		expect(postClearCount).is(0)
+	})
 })
 

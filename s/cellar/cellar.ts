@@ -10,7 +10,7 @@ import {MemoryForklift} from "./memory-forklift.js"
  *  - files cannot be modified (delete it and save another)
  *  - no filenames or metadata (store those somewhere else)
  *  - pass in a forklift, which is the backend that actually stores the data
- *    - in-memory forklift is the default forklift
+ *    - MemoryForklift is the default
  *    - OpfsForklift is probably what you really want in the browser
  */
 export class Cellar {
@@ -19,6 +19,10 @@ export class Cellar {
 	}
 
 	constructor(private forklift: Forklift = new MemoryForklift()) {}
+
+	async *list(): AsyncIterable<string> {
+		yield* this.forklift.list()
+	}
 
 	async has(hash: string): Promise<boolean> {
 		return this.forklift.has(hash)
@@ -39,6 +43,11 @@ export class Cellar {
 
 	async delete(hash: string) {
 		await this.forklift.delete(hash)
+	}
+
+	async clear() {
+		for await (const hash of this.list())
+			await this.delete(hash)
 	}
 }
 
