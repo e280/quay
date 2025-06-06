@@ -32,6 +32,7 @@ export class Cellar {
 		const cask = await Cask.make(bytes)
 		if (!await this.forklift.has(cask.hash))
 			await this.forklift.save(cask.hash, cask.bytes)
+		return cask
 	}
 
 	async load(hash: string): Promise<Cask> {
