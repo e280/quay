@@ -16,6 +16,9 @@ export type MediaSchema = AsSchema<{
 			label: string
 			format: MediaFormat
 			previewUrl: string | null
+			hash?: string
+			mime?: string
+			size?: number
 		}
 	}
 }>

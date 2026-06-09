@@ -115,3 +115,31 @@ new Quay.Brain({
 
 In this way, you can setup sophisticated rules about what actions are permitted, and under whatever changing circumstances.
 
+<br/>
+
+## MediaStore
+
+`MediaStore` is a small persistent media-bin preset.
+
+```ts
+import {MediaStore, brain, register, components} from "@e280/quay"
+
+const media = await MediaStore.open("my-project")
+brain.setGroup("media", media)
+
+register(components)
+```
+
+```html
+<div group="media">
+  <quay-dropzone></quay-dropzone>
+  <quay-browser></quay-browser>
+</div>
+```
+
+The scope passed to `open()` separates media libraries.
+
+```ts
+const projectA = await MediaStore.open("project-a")
+const projectB = await MediaStore.open("project-b")
+```
