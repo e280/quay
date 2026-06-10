@@ -26,7 +26,6 @@ export default template(import.meta.url, async orb => {
 				})}
 
 				<link rel="stylesheet" href="${orb.hashurl("demo/main.css")}"/>
-				<script type="importmap">${orb.inject("$/x/importmap.json")}</script>
 				<script type="module" src="${orb.hashurl("demo/main.bundle.min.js")}"></script>
 
 				<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@shoelace-style/shoelace@2.20.0/cdn/themes/dark.css"/>
