@@ -3,8 +3,8 @@ import {html} from "lit"
 import {MapG} from "@e280/stz"
 import {Content} from "@e280/sly"
 
-import Quay from "../../../index.js"
 import {Group} from "../../group.js"
+import {Permissions} from "../../permissions.js"
 import {Codex} from "../../aspects/codex/codex.js"
 import {MediaFormat, MediaSchema} from "./schema.js"
 import {GroupConfig, SearchFn, SortFn} from "../../types.js"
@@ -84,7 +84,7 @@ export class MediaGroup extends Group<MediaSchema> {
 					// // TODO icons
 					// : html`<sl-icon name=${item.taxon.icon}></sl-icon>`
 			},
-			permissions: item => Quay.permissions.all,
+			permissions: item => Permissions.all,
 		}
 	}
 

@@ -1,7 +1,7 @@
 
-import Quay from "../../../index.js"
 import {Group} from "../../group.js"
 import {PlainSchema} from "./schema.js"
+import {Permissions} from "../../permissions.js"
 import {GroupConfig, SortFn} from "../../types.js"
 import {Codex} from "../../aspects/codex/codex.js"
 
@@ -33,7 +33,7 @@ export class PlainGroup extends Group<PlainSchema> {
 			renderLabel: item => item.id,
 			renderIcon: item => item.taxon.icon,
 			renderPreview: () => null,
-			permissions: item => Quay.permissions.all,
+			permissions: item => Permissions.all,
 		}
 	}
 

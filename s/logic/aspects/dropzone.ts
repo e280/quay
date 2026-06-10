@@ -1,4 +1,4 @@
-import {loot} from "@e280/sly"
+import {loot} from "@e280/sly/loot"
 import {signal} from "@e280/strata"
 
 import {Group} from "../group.js"
