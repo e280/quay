@@ -1,11 +1,12 @@
-import {ShockDragDrop, signal} from "@benev/slate"
+import {loot} from "@e280/sly"
+import {signal} from "@e280/strata"
 
 import {Group} from "../group.js"
 import {CodexItem} from "./codex/parts/codex-item.js"
 
 export class Dropzone {
-	#drag_drop = new ShockDragDrop<CodexItem, CodexItem>({
-		handle_drop: (_e, grabbed, hovering) => this.group.move(grabbed, hovering)
+	#drag_drop = new loot.DragAndDrops<CodexItem, CodexItem>({
+		acceptDrop: (_e, grabbed, hovering) => this.group.move(grabbed, hovering)
 	})
 
 	constructor(private group: Group) {}
@@ -14,37 +15,40 @@ export class Dropzone {
 	#hovering = signal<CodexItem | undefined>(undefined)
 
 	get grabbed() {
-		return this.#drag_drop.grabbed
+		return this.#drag_drop.dragging
 	}
 
 	get hovering() {
-		return this.#drag_drop.hovering ?? this.#hovering.value
+		return this.#drag_drop.hovering ?? this.#hovering()
 	}
 
-	dragenter = (e: DragEvent, target?: CodexItem) => {
+	dragenter = (e: DragEvent, target: CodexItem) => {
 		e.preventDefault()
-		this.#drag_drop.dropzone.dragenter()(e)
-		this.#hovering.value = target
+		this.#drag_drop.dropzone(() => target).dragenter(e)
+		this.#hovering(target)
 	}
 
 	dragleave = (e: DragEvent) => {
-		this.#drag_drop.dropzone.dragleave()(e)
-		this.#hovering.value = undefined
+		const hovering = this.hovering
+		if (hovering)
+			this.#drag_drop.dropzone(() => hovering).dragleave(e)
+		this.#hovering(undefined)
 	}
 
 	dragstart = (e: DragEvent, n: CodexItem) => {
 		e.stopPropagation()
-		this.#drag_drop.dragzone.dragstart(n)(e)
+		this.#drag_drop.dragzone(() => n).dragstart(e)
 	}
 
 	dragover = (e: DragEvent, n: CodexItem) => {
 		e.preventDefault()
-		this.#drag_drop.dropzone.dragover(n)(e)
+		this.#drag_drop.dropzone(() => n).dragover(e)
 	}
 
 	dragend = (e: DragEvent) => {
-		this.#drag_drop.dragzone.dragend()(e)
-		this.#hovering.value = undefined
+		this.#drag_drop.$draggy(undefined)
+		this.#drag_drop.$droppy(undefined)
+		this.#hovering(undefined)
 	}
 
 	drop = (e: DragEvent, target: CodexItem) => {
@@ -60,9 +64,9 @@ export class Dropzone {
 		const parent = this.grabbed?.parent?.id === this.hovering?.id
 
 		if(!same && !child && !parent)
-			this.#drag_drop.dropzone.drop(target)(e)
+			this.#drag_drop.dropzone(() => target).drop(e)
 
-		this.#hovering.value = undefined
+		this.#hovering(undefined)
 	}
 
 	change = (e: DragEvent, targetFolder: CodexItem) => {
