@@ -1,22 +1,23 @@
 
-import {html, shadowComponent} from "@benev/slate"
+import {html} from "lit"
+import {shadowElement, useHost, useStyles} from "@e280/sly"
 
 import themeCss from "../../theme.css.js"
 
 import {findLocalGroup} from "../../utils/find-local-group.js"
 import {CodexItem} from "../../../logic/aspects/codex/parts/codex-item.js"
 
-export const QuayBreadcrumb = shadowComponent(use => {
-	use.css(themeCss)
+export const QuayBreadcrumb = shadowElement(() => {
+	useStyles(themeCss)
 
-	const group = findLocalGroup(use.element)
+	const group = findLocalGroup(useHost())
 	const {trail, config: {codex, renderLabel}} = group
 
 	const click = (item: CodexItem) => (e: Event) => group.trail.setTrail(e, item)
 
 	return html`
 		<sl-breadcrumb>
-			${trail.signal.value.map(item => html`
+			${trail.signal().map(item => html`
 				<sl-breadcrumb-item @click="${click(item)}">
 					${item === null
 						? "root"

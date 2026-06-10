@@ -1,6 +1,7 @@
 
+import {html} from "lit"
 import {MapG} from "@e280/stz"
-import {Content, html} from "@benev/slate"
+import {Content} from "@e280/sly"
 
 import Quay from "../../../index.js"
 import {Group} from "../../group.js"
@@ -9,7 +10,7 @@ import {MediaFormat, MediaSchema} from "./schema.js"
 import {GroupConfig, SearchFn, SortFn} from "../../types.js"
 import {CodexItem} from "../../aspects/codex/parts/codex-item.js"
 
-export class MediaGroup extends Group<MediaSchema> implements Group {
+export class MediaGroup extends Group<MediaSchema> {
 	static config = (): GroupConfig<MediaSchema> => {
 		const formatIcons = new MapG<MediaFormat, Content>()
 			.set("audio", html`<sl-icon name=music-note-beamed></sl-icon>`)

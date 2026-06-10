@@ -1,5 +1,5 @@
 import {sub} from "@e280/stz"
-import {signal} from "@benev/slate"
+import {signal} from "@e280/strata"
 
 import {Permission} from "./permissions.js"
 import {Dropzone} from "./aspects/dropzone.js"
@@ -26,13 +26,13 @@ export class Group<Sc extends Schema = any> {
 	}
 
 	constructor(public config: GroupConfig<Sc>) {
-		this.selectedFilter.value = config.defaultFilter
-		this.selectedSort.value = config.defaultSort
+		this.selectedFilter(config.defaultFilter)
+		this.selectedSort(config.defaultSort)
 		this.trail = new TreeTrail(config.root)
 	}
 
 	get permissions() {
-		return this.config.permissions as (item: CodexItem) => Permission
+		return this.config.permissions as (item: CodexItem<Sc>) => Permission
 	}
 
 	getFilterFn(filterKey: string): SearchFn<Sc> {
@@ -49,13 +49,13 @@ export class Group<Sc extends Schema = any> {
 	}
 
 	sort(items: CodexItem<Sc>[]): CodexItem<Sc>[] {
-		const sortFn = this.getSortFn(this.selectedSort.value)
+		const sortFn = this.getSortFn(this.selectedSort())
 		return [...items].sort(sortFn)
 	}
 
 	matches(item: CodexItem<Sc>) {
-		const filterFn = this.getFilterFn(this.selectedFilter.value)
-		const searchFn = this.getSearchFn(this.searchText.value)
+		const filterFn = this.getFilterFn(this.selectedFilter())
+		const searchFn = this.getSearchFn(this.searchText())
 		return filterFn(item) && searchFn(item)
 	}
 

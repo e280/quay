@@ -1,5 +1,7 @@
 
-import {html, shadowComponent, css} from '@benev/slate'
+import {html, css} from "lit"
+import {shadowElement, useHost, useStyles} from "@e280/sly"
+
 import themeCss from '../../theme.css.js'
 
 import {findLocalGroup} from '../../utils/find-local-group.js'
@@ -10,9 +12,10 @@ const styleCss = css`
 	}
 `
 
-export const QuaySearchbar = shadowComponent(use => {
-	use.styles(themeCss, styleCss)
-	const group = findLocalGroup(use.element)
+export const QuaySearchbar = shadowElement(() => {
+	useStyles(themeCss, styleCss)
+	const host = useHost()
+	const group = findLocalGroup(host)
 
 	return html`
 		<sl-input
@@ -20,7 +23,7 @@ export const QuaySearchbar = shadowComponent(use => {
 			pill
 			placeholder='Search'
 			clearable
-			@sl-input=${(e: CustomEvent) => group.searchText.value = (e.target as HTMLInputElement).value}
+			@sl-input=${(e: CustomEvent) => group.searchText((e.target as HTMLInputElement).value)}
 		>
 			<sl-icon name='search' slot='prefix'></sl-icon>
 		</sl-input>

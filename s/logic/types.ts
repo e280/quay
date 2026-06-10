@@ -1,9 +1,9 @@
 
+import {Content} from "@e280/sly"
 import {Permission} from "./permissions.js"
 import {Codex} from "./aspects/codex/codex.js"
 import {Schema} from "./aspects/codex/parts/types.js"
 import {CodexItem} from "./aspects/codex/parts/codex-item.js"
-import { Content } from "@benev/slate"
 
 export type SearchFn<Sc extends Schema> = (item: CodexItem<Sc>) => boolean
 export type SortFn<Sc extends Schema> = (a: CodexItem<Sc>, b: CodexItem<Sc>) => number

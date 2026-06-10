@@ -1,5 +1,5 @@
 
-import {register} from "@benev/slate"
+import {dom} from "@e280/sly"
 import {brain} from "../dom/context.js"
 import {MediaGroup} from "../logic/presets/media/group.js"
 import {MediaFormat} from "../logic/presets/media/schema.js"
@@ -35,5 +35,4 @@ group.on.upload.sub(({files, target}) => {
 })
 
 setShoelaceDarkTheme()
-register(components)
-
+dom.register(components)

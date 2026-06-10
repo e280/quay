@@ -1,5 +1,5 @@
 
-import {Content} from "@benev/slate"
+import {Content} from "@e280/sly"
 
 export type Id = string
 

@@ -1,15 +1,17 @@
 
-import {html, shadowComponent} from "@benev/slate"
+import {html} from "lit"
+import {shadowElement, useHost, useStyles} from "@e280/sly"
 
 import styleCss from "./style.css.js"
 import themeCss from "../../theme.css.js"
 
 import {findLocalGroup} from "../../utils/find-local-group.js"
 
-export const QuayDropzone = shadowComponent(use => {
-	use.styles(themeCss, styleCss)
+export const QuayDropzone = shadowElement(() => {
+	useStyles(themeCss, styleCss)
+	const host = useHost()
 
-	const group = findLocalGroup(use.element)
+	const group = findLocalGroup(host)
 	const {dropzone, config: {root}} = group
 
 	return html`

@@ -1,5 +1,6 @@
 
-import {html, shadowView, TemplateResult} from "@benev/slate"
+import {html, TemplateResult} from "lit"
+import {shadow, useMount, useRender, useStyles} from "@e280/sly"
 
 import styleCss from "./style.css.js"
 import themeCss from "../../theme.css.js"
@@ -7,14 +8,15 @@ import themeCss from "../../theme.css.js"
 import {Group} from "../../../logic/group.js"
 import {CodexItem} from "../../../logic/aspects/codex/parts/codex-item.js"
 
-export const Tree = shadowView(use => (group: Group) => {
-	use.styles(themeCss, styleCss)
+export const Tree = shadow((group: Group) => {
+	useStyles(themeCss, styleCss)
+	const render = useRender()
 
 	const {config} = group
 	const {dropzone, trail, config: {root}} = group
 
-	use.mount(() => {
-		const dispose = group.on.upload.sub(() => use.rerender())
+	useMount(() => {
+		const dispose = group.on.upload.sub(() => render())
 		return () => dispose()
 	})
 
@@ -38,7 +40,7 @@ export const Tree = shadowView(use => (group: Group) => {
 		${config.renderLabel(item)}
 	`
 
-	const render = (item: CodexItem): TemplateResult => {
+	const renderTree = (item: CodexItem): TemplateResult => {
 		return html`
 			<sl-tree-item
 				draggable="true"
@@ -51,14 +53,14 @@ export const Tree = shadowView(use => (group: Group) => {
 				${item.kind === "folder"
 					? renderFolderItem(item)
 					: renderItem(item)}
-				${group.sort(item.children).map((item) => group.matches(item) ? render(item) : null)}
+				${group.sort(item.children).map((item) => group.matches(item) ? renderTree(item) : null)}
 			</sl-tree-item>
 		`
 	}
 
 	return html`
 		<sl-tree selection=leaf>
-			${render(root)}
+			${renderTree(root)}
 		</sl-tree>`
 })
 

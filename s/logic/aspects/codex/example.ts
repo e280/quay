@@ -1,7 +1,4 @@
 
-import "@benev/slate/x/node.js"
-import {repeat_string} from "@benev/turtle"
-
 import {Codex} from "./codex.js"
 import {AsSchema, Taxon} from "./parts/types.js"
 
@@ -48,7 +45,7 @@ src
 	//                   we can crawl any folder!
 	//                                    👇
 for (const [item, ancestors] of folder.crawl()) {
-	const indent = repeat_string(ancestors.length, "  ")
+	const indent = "  ".repeat(ancestors.length)
 	const specimen = item.specimen
 	const label = item.kind === "folder"
 		? specimen.label + "/"

@@ -1,5 +1,6 @@
 
-export {register, css} from "@benev/slate"
+export {css} from "lit"
+export {dom} from "@e280/sly"
 
 export * from "./cellar/index.js"
 

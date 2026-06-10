@@ -1,4 +1,6 @@
-import {html, shadowComponent} from "@benev/slate"
+
+import {html} from "lit"
+import {shadowElement, useHost, useMount, useRender, useState, useStyles} from "@e280/sly"
 
 import styleCss from "./style.css.js"
 import themeCss from "../../theme.css.js"
@@ -6,15 +8,17 @@ import themeCss from "../../theme.css.js"
 import {findLocalGroup} from "../../utils/find-local-group.js"
 import {CodexItem} from "../../../logic/aspects/codex/parts/codex-item.js"
 
-export const QuayBrowser = shadowComponent(use => {
-	use.styles(themeCss, styleCss)
+export const QuayBrowser = shadowElement(() => {
+	useStyles(themeCss, styleCss)
+	const host = useHost()
+	const render = useRender()
 
-	const group = findLocalGroup(use.element)
+	const group = findLocalGroup(host)
 	const {trail, config} = group
-	const [viewMode, setViewMode] = use.state<'details' | 'tiles'>('tiles')
+	const [viewMode, setViewMode] = useState<'details' | 'tiles'>('tiles')
 
-	use.mount(() => {
-		const dispose = group.on.upload.sub(() => use.rerender())
+	useMount(() => {
+		const dispose = group.on.upload.sub(() => render())
 		return () => dispose()
 	})
 

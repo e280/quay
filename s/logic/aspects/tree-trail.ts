@@ -1,4 +1,5 @@
-import {signal} from "@benev/slate"
+
+import {signal} from "@e280/strata"
 import {Schema} from "./codex/parts/types.js"
 import {CodexItem} from "./codex/parts/codex-item.js"
 
@@ -6,7 +7,7 @@ export class TreeTrail<Sc extends Schema> {
 	readonly signal = signal<CodexItem<Sc>[]>([])
 
 	constructor(root: CodexItem<Sc>) {
-		this.signal.value = [root]
+		this.signal([root])
 	}
 
 	setTrail(e: Event, item: CodexItem<Sc>) {
@@ -23,11 +24,11 @@ export class TreeTrail<Sc extends Schema> {
 			cur = cur.parent
 		}
 
-		this.signal.value = trail
+		this.signal(trail)
 	}
 
 	get currentFolder() {
-		return this.signal.value.at(-1)?.children ?? []
+		return this.signal().at(-1)?.children ?? []
 	}
 }
 
