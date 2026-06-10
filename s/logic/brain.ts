@@ -2,6 +2,8 @@
 import {MapG} from "@e280/stz"
 import {Group} from "./group.js"
 
+type RegisteredGroup<G> = G extends Group<infer _Schema> ? G : never
+
 /**
  * Quay's global state
  *  - manages groups
@@ -10,13 +12,13 @@ import {Group} from "./group.js"
 export class Brain {
 	#groups = new MapG<string, Group>()
 
-	setGroup<G extends Group>(name: string, group: G) {
+	setGroup<G>(name: string, group: RegisteredGroup<G>) {
 		this.#groups.set(name, group)
 		return group
 	}
 
-	getGroup<G extends Group>(name: string) {
-		return this.#groups.require(name) as G
+	getGroup<G = Group>(name: string) {
+		return this.#groups.require(name) as RegisteredGroup<G>
 	}
 }
 
