@@ -1,12 +1,16 @@
-import {html, shadowComponent, css} from "@benev/slate"
+
+import {html, css} from "lit"
+import {shadowElement, useHost, useStyles} from "@e280/sly"
+
 import themeCss from "../../theme.css.js"
 import {findLocalGroup} from "../../utils/find-local-group.js"
 import type SlMenuItem from "@shoelace-style/shoelace/dist/components/menu-item/menu-item.js"
 
-export const QuayFilter = shadowComponent(use => {
-	const group = findLocalGroup(use.element)
+export const QuayFilter = shadowElement(() => {
+	const host = useHost()
+	const group = findLocalGroup(host)
 
-	use.styles(themeCss, css`
+	useStyles(themeCss, css`
 		sl-menu {
 			margin-top: 0.3em;
 
@@ -20,7 +24,7 @@ export const QuayFilter = shadowComponent(use => {
 
 	const onSelectFilter = (e: CustomEvent<{item: SlMenuItem}>) => {
 		const value = e.detail.item.value
-		group.selectedFilter.value = value
+		group.selectedFilter(value)
 	}
 
 	return html`
@@ -33,7 +37,7 @@ export const QuayFilter = shadowComponent(use => {
 				${[...group.config.filters?.keys()].map(filter => html`
 					<sl-menu-item value=${filter}>
 						<div class=item>
-							<sl-icon name="check" slot="prefix" style="visibility: ${filter === group.selectedFilter.value ? 'visible' : 'hidden'}"></sl-icon>
+							<sl-icon name="check" slot="prefix" style="visibility: ${filter === group.selectedFilter() ? 'visible' : 'hidden'}"></sl-icon>
 							<span>${filter}</span>
 						</div>
 					</sl-menu-item>
@@ -42,3 +46,4 @@ export const QuayFilter = shadowComponent(use => {
 			</sl-dropdown>
 		</div>`
 })
+

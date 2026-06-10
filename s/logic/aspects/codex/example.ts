@@ -1,5 +1,4 @@
 
-import "@benev/slate/x/node.js"
 import {repeat_string} from "@benev/turtle"
 
 import {Codex} from "./codex.js"

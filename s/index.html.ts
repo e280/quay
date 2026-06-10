@@ -1,4 +1,3 @@
-import "@benev/slate/x/node.js"
 import {template, html, easypage, headScripts, git_commit_hash, read_file, renderSocialCard, read_json} from "@benev/turtle"
 
 const domain = "quay.e280.org"

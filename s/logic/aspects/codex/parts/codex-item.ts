@@ -1,5 +1,5 @@
 
-import {signal} from "@benev/slate"
+import {signal} from "@e280/strata"
 import {Codex} from "../codex.js"
 import {Id, Kind, Schema} from "./types.js"
 
@@ -52,14 +52,14 @@ export class CodexItem<Sc extends Schema = any, K extends Kind<Sc> = Kind<Sc>> {
 	/** add items as children */
 	attach(...items: CodexItem<Sc>[]) {
 		this.codex.hierarchy.attach(this.id, ...items.map(i => i.id))
-		this.signal.publish()
+		this.signal(this)
 		return this
 	}
 
 	/** detach this item from the hierarchy completely */
 	detach() {
 		this.codex.hierarchy.detach(this.id)
-		this.signal.publish()
+		this.signal(this)
 	}
 
 	/** create a new item that will be a child */
@@ -72,7 +72,7 @@ export class CodexItem<Sc extends Schema = any, K extends Kind<Sc> = Kind<Sc>> {
 	/** create a new item that will be a child */
 	destroy() {
 		this.codex.hierarchy.destroy(this.id)
-		this.signal.publish()
+		this.signal(this)
 	}
 
 	/** iterate over this item and all its descendants */

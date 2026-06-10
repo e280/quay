@@ -1,5 +1,5 @@
 
-import {Content} from "@benev/slate"
+import {Content} from "@e280/sly"
 import {AsSchema} from "../../aspects/codex/parts/types.js"
 
 export type PlainSchema = AsSchema<{

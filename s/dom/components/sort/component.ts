@@ -1,12 +1,16 @@
-import {html, shadowComponent, css} from "@benev/slate"
+
+import {html, css} from "lit"
+import {shadowElement, useHost, useStyles} from "@e280/sly"
+
 import themeCss from "../../theme.css.js"
 import {findLocalGroup} from "../../utils/find-local-group.js"
 import type SlMenuItem from "@shoelace-style/shoelace/dist/components/menu-item/menu-item.js"
 
-export const QuaySort = shadowComponent(use => {
-	const group = findLocalGroup(use.element)
+export const QuaySort = shadowElement(() => {
+	const host = useHost()
+	const group = findLocalGroup(host)
 
-	use.styles(themeCss, css`
+	useStyles(themeCss, css`
 		sl-button sl-icon {
 			font-size: 14px;
 		}
@@ -24,7 +28,7 @@ export const QuaySort = shadowComponent(use => {
 
 	const onSelectSort = (e: CustomEvent<{item: SlMenuItem}>) => {
 		const value = e.detail.item.value
-		group.selectedSort.value = value
+		group.selectedSort(value)
 	}
 
 	return html`
@@ -37,7 +41,7 @@ export const QuaySort = shadowComponent(use => {
 				${[...group.config.sorts?.keys()].map(sort => html`
 					<sl-menu-item value=${sort}>
 						<div class=item>
-							<sl-icon name="check" slot="prefix" style="visibility: ${sort === group.selectedSort.value ? 'visible' : 'hidden'}"></sl-icon>
+							<sl-icon name="check" slot="prefix" style="visibility: ${sort === group.selectedSort() ? 'visible' : 'hidden'}"></sl-icon>
 							<span>${sort}</span>
 						</div>
 					</sl-menu-item>
