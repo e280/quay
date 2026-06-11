@@ -1,9 +1,10 @@
 
 import {Kv, StorageDriver} from "@e280/kv"
 
-import {Cellar} from "../../../cellar/cellar.js"
-import {MediaFormat} from "./schema.js"
 import {MediaGroup} from "./group.js"
+import {Cellar} from "../../../cellar/cellar.js"
+import {MediaFormat, MediaSchema} from "./schema.js"
+import {CodexItem} from "../../aspects/codex/parts/codex-item.js"
 
 export type MediaRecord = {
 	hash: string
@@ -33,7 +34,11 @@ export class MediaLibrary extends MediaGroup {
 		super()
 		this.#index = mediaIndex("default")
 		this.on.upload.sub(({files, target}) => {
-			void this.importFiles(files, target)
+			return this.#upload(files, target)
+		})
+		this.on.delete.sub(({items}) => {
+			const hashes = this.#hashes(items)
+			return this.#delete(hashes)
 		})
 	}
 
@@ -50,11 +55,11 @@ export class MediaLibrary extends MediaGroup {
 		}
 	}
 
-	async importFiles(files: File[], parent = this.config.root) {
-		return Promise.all(files.map(f => this.importFile(f, parent)))
+	async #upload(files: File[], parent: CodexItem<MediaSchema>) {
+		await Promise.all(files.map(file => this.#storeFile(file, parent)))
 	}
 
-	async importFile(file: File, parent = this.config.root) {
+	async #storeFile(file: File, parent: CodexItem<MediaSchema>) {
 		const bytes = new Uint8Array(await file.arrayBuffer())
 		const cask = await this.cellar.save(bytes)
 		const existing = await this.#index.get(cask.hash)
@@ -75,15 +80,18 @@ export class MediaLibrary extends MediaGroup {
 		return record
 	}
 
-	async remove(hash: string) {
-		await this.#index.del(hash)
-		await this.cellar.delete(hash)
-		const item = this.findByHash(hash)
-		if (item) {
-			item.detach()
-			item.destroy()
+	#hashes(items: CodexItem<MediaSchema>[]) {
+		return items
+			.map(item => item.isKind("file") ? item.specimen.hash : undefined)
+			.filter((hash): hash is string => !!hash)
+	}
+
+	async #delete(hashes: string[]) {
+		for (const hash of hashes) {
+			await this.#index.del(hash)
+			await this.cellar.delete(hash)
+			this.#revokePreview(hash)
 		}
-		this.#revokePreview(hash)
 	}
 
 	findByHash(hash: string) {
@@ -160,3 +168,4 @@ function mediaIndex(scope: string) {
 	memoryIndexes.set(scope, index)
 	return index
 }
+

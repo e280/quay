@@ -18,7 +18,7 @@ export class Group<Sc extends Schema = any> {
 	on = {
 		newFolder: sub<[{parent: CodexItem<Sc>}]>(),
 		move: sub<[{item: CodexItem<Sc>, target: CodexItem<Sc>}]>(),
-		delete: sub<[{item: CodexItem<Sc>}]>(),
+		delete: sub<[{items: CodexItem<Sc>[]}]>(),
 		rename: sub<[{item: CodexItem<Sc>, newName: string}]>(),
 		upload: sub<[{files: File[], target: CodexItem<Sc>}]>(),
 		search: sub<[{terms: string[]}]>(),
@@ -73,9 +73,11 @@ export class Group<Sc extends Schema = any> {
 		if(!this.permissions(item).delete)
 			throw new Error("delete permission not granted")
 
+		const items = [...item.crawl()].map(([item]) => item)
+
 		item.destroy()
 
-		this.on.delete.pub({item})
+		return this.on.delete.pub({items})
 	}
 
 	rename(item: CodexItem<Sc>, newName: string) {
@@ -89,7 +91,7 @@ export class Group<Sc extends Schema = any> {
 		if(!this.permissions(folder).upload)
 			throw new Error("upload permission not granted")
 
-		this.on.upload.pub({files, target: folder})
+		return this.on.upload.pub({files, target: folder})
 	}
 
 	addFolder(parent: CodexItem<Sc>) {
