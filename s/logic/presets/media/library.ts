@@ -149,8 +149,8 @@ function mediaIndex(scope: string) {
 	const storage = globalThis.localStorage
 	if (storage)
 		return new Kv<MediaRecord>(new StorageDriver(storage))
-			.namespace("quay.media")
-			.namespace(scope)
+			.scope("quay.media")
+			.scope(scope)
 
 	const existing = memoryIndexes.get(scope)
 	if (existing)
