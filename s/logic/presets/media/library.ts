@@ -15,7 +15,7 @@ export type MediaRecord = {
 	updatedAt: number
 }
 
-export class MediaStore extends MediaGroup {
+export class MediaLibrary extends MediaGroup {
 	static async open(scope = "default") {
 		const group = new this()
 		group.cellar = await Cellar.opfs("media")
@@ -160,4 +160,3 @@ function mediaIndex(scope: string) {
 	memoryIndexes.set(scope, index)
 	return index
 }
-

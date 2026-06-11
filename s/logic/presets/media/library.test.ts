@@ -2,13 +2,13 @@
 import {Txt} from "@e280/stz"
 import {expect, Science, test} from "@e280/science"
 
-import {MediaStore} from "./store.js"
+import {MediaLibrary} from "./library.js"
 
 delete (globalThis as any).localStorage
 
 export default Science.suite({
 	"imports files into cellar and index": test(async() => {
-		const group = new MediaStore()
+		const group = new MediaLibrary()
 		const file = new File([Txt.toBytes("hello")], "hello.txt", {type: "text/plain"})
 
 		const [record] = await group.importFiles([file])
@@ -18,7 +18,7 @@ export default Science.suite({
 	}),
 
 	"lists media records": test(async() => {
-		const store = new MediaStore()
+		const store = new MediaLibrary()
 		const file = new File([Txt.toBytes("image")], "image.png", {type: "image/png"})
 		const record = await store.importFile(file)
 		const records = []
@@ -29,7 +29,7 @@ export default Science.suite({
 	}),
 
 	"removes media records and bytes": test(async() => {
-		const store = new MediaStore()
+		const store = new MediaLibrary()
 		const file = new File([Txt.toBytes("image")], "image.png", {type: "image/png"})
 		const record = await store.importFile(file)
 
@@ -39,3 +39,4 @@ export default Science.suite({
 		expect(store.findByHash(record.hash)).is(undefined)
 	}),
 })
+

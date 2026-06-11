@@ -117,14 +117,14 @@ In this way, you can setup sophisticated rules about what actions are permitted,
 
 <br/>
 
-## MediaStore
+## MediaLibrary
 
-`MediaStore` is a small persistent media-bin preset.
+`MediaLibrary` is a small persistent media-bin preset.
 
 ```ts
-import {MediaStore, brain, register, components} from "@e280/quay"
+import {MediaLibrary, brain, register, components} from "@e280/quay"
 
-const media = await MediaStore.open("my-project")
+const media = await MediaLibrary.open("my-project")
 brain.setGroup("media", media)
 
 register(components)
@@ -140,6 +140,6 @@ register(components)
 The scope passed to `open()` separates media libraries.
 
 ```ts
-const projectA = await MediaStore.open("project-a")
-const projectB = await MediaStore.open("project-b")
+const projectA = await MediaLibrary.open("project-a")
+const projectB = await MediaLibrary.open("project-b")
 ```
