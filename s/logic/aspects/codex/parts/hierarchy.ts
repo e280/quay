@@ -55,6 +55,7 @@ export class Hierarchy {
 
 	/** destroy all relations associated with this id, and all its descendants */
 	destroy(id: Id) {
+		this.detach(id)
 		const tree = [...this.crawl(id)]
 		for (const [id] of tree) {
 			this.#children.delete(id)
