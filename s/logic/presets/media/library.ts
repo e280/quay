@@ -60,8 +60,7 @@ export class MediaLibrary extends MediaGroup {
 	}
 
 	async #storeFile(file: File, parent: CodexItem<MediaSchema>) {
-		const bytes = new Uint8Array(await file.arrayBuffer())
-		const cask = await this.cellar.save(bytes)
+		const cask = await this.cellar.save(file)
 		const existing = await this.#index.get(cask.hash)
 		const now = Date.now()
 		const record: MediaRecord = {
@@ -126,7 +125,7 @@ export class MediaLibrary extends MediaGroup {
 
 	async #loadPreview(record: MediaRecord) {
 		const cask = await this.cellar.load(record.hash)
-		const blob = new Blob([cask.bytes], {type: record.mime || "image/*"})
+		const blob = new Blob([cask.file], {type: record.mime || "image/*"})
 		return this.#setPreview(record.hash, URL.createObjectURL(blob))
 	}
 

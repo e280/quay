@@ -1,18 +1,24 @@
 
 import {Hex} from "@e280/stz"
+import {blake3} from "@noble/hashes/blake3.js"
 
 /** File with a hash label */
 export class Cask {
-	static async hash(bytes: Uint8Array) {
-		const hashBuffer = await crypto.subtle.digest("SHA-256", bytes)
-		return Hex.fromBytes(new Uint8Array(hashBuffer))
+	static async hash(file: Blob) {
+		const hasher = blake3.create()
+
+		for await (const chunk of file.stream())
+			hasher.update(chunk)
+
+		const digest = hasher.digest()
+		return Hex.fromBytes(digest)
 	}
 
-	static async make(bytes: Uint8Array) {
-		const hash = await this.hash(bytes)
-		return new this(hash, bytes)
+	static async make(file: Blob) {
+		const hash = await this.hash(file)
+		return new this(hash, file)
 	}
 
-	constructor(public hash: string, public bytes: Uint8Array) {}
+	constructor(public hash: string, public file: Blob) {}
 }
 

@@ -28,18 +28,16 @@ export class OpfsForklift implements Forklift {
 		}
 	}
 
-	async save(label: string, bytes: Uint8Array): Promise<void> {
+	async save(label: string, file: Blob): Promise<void> {
 		const fileHandle = await this.directory.getFileHandle(label, {create: true})
 		const writable = await fileHandle.createWritable()
-		await writable.write(bytes)
+		await writable.write(file)
 		await writable.close()
 	}
 
-	async load(label: string): Promise<Uint8Array> {
+	async load(label: string): Promise<Blob> {
 		const fileHandle = await this.directory.getFileHandle(label)
-		const file = await fileHandle.getFile()
-		const buffer = await file.arrayBuffer()
-		return new Uint8Array(buffer)
+		return await fileHandle.getFile()
 	}
 
 	async delete(label: string) {

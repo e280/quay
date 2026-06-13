@@ -14,12 +14,13 @@ export class MemoryForklift implements Forklift {
 		return this.#map.has(label)
 	}
 
-	async save(label: string, bytes: Uint8Array): Promise<void> {
+	async save(label: string, file: Blob): Promise<void> {
+		const bytes = new Uint8Array(await file.arrayBuffer())
 		this.#map.set(label, bytes)
 	}
 
-	async load(label: string): Promise<Uint8Array> {
-		return this.#map.require(label)
+	async load(label: string): Promise<Blob> {
+		return new Blob([this.#map.require(label)])
 	}
 
 	async delete(label: string) {

@@ -28,10 +28,10 @@ export class Cellar {
 		return this.forklift.has(hash)
 	}
 
-	async save(bytes: Uint8Array) {
-		const cask = await Cask.make(bytes)
+	async save(file: Blob) {
+		const cask = await Cask.make(file)
 		if (!await this.forklift.has(cask.hash))
-			await this.forklift.save(cask.hash, cask.bytes)
+			await this.forklift.save(cask.hash, cask.file)
 		return cask
 	}
 
