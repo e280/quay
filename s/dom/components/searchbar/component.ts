@@ -7,8 +7,12 @@ import themeCss from '../../theme.css.js'
 import {findLocalGroup} from '../../utils/find-local-group.js'
 
 const styleCss = css`
+	sl-input::part(base) {
+		border-radius: var(--radius);
+	}
+
 	sl-input::part(prefix) {
-		padding-left: 0.5em;
+		padding-left: var(--space-sm);
 	}
 `
 
@@ -29,4 +33,3 @@ export const QuaySearchbar = shadowElement(() => {
 		</sl-input>
 	`
 })
-

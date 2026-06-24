@@ -5,38 +5,39 @@ export default css`
 .toolbar {
 	display: flex;
 	justify-content: flex-end;
-	padding: 0.5rem;
+	padding: var(--space-sm);
 
 	sl-button {
-		background: #0F0F11;
-		border-radius: 5px;
+		background: var(--surface);
+		border-radius: var(--radius-small);
 
 		&[data-active=true] {
-			background: var(--sl-color-neutral-0);
+			background: var(--surface-active);
 		}
 
 		&::part(base) {
 			display: flex;
 			align-items: center;
-			height: 30px;
+			height: var(--control-height);
+			border-radius: var(--radius-small);
 		}
 
 		&::part(label) {
 			display: flex;
-			width: 40px;
+			width: var(--control-width);
 		}
 	}
 }
 
 .tiles,
 .details {
-	padding: 0.5rem;
+	padding: var(--space-sm);
 }
 
 .tiles {
 	display: flex;
 	flex-wrap: wrap;
-	row-gap: 1em;
+	row-gap: var(--space-md);
 	width: 100%;
 
 	.item {
@@ -50,11 +51,11 @@ export default css`
 			display: flex;
 			align-items: center;
 			justify-content: center;
-			width: 100px;
-			height: 60px;
-			border: 2px solid #0D0D0E;
-			border-radius: 5px;
-			background: #0F0F11;
+			width: var(--quay-browser-thumb-width, 100px);
+			height: var(--quay-browser-thumb-height, 60px);
+			border: var(--border-width) solid var(--border);
+			border-radius: var(--radius-small);
+			background: var(--surface);
 			pointer-events: none;
 
 			img {
@@ -64,14 +65,14 @@ export default css`
 		}
 
 		.label {
-			margin-top: 0.5em;
+			margin-top: var(--space-xs);
 			max-width: 150px;
-			font-size: 0.85rem;
+			font-size: var(--font-size-sm);
 			text-align: center;
 			white-space: nowrap;
 			overflow: hidden;
 			text-overflow: ellipsis;
-			color: var(--sl-color-neutral-700);
+			color: var(--text-muted);
 		}
 	}
 }
@@ -79,40 +80,39 @@ export default css`
 .details {
 	.card {
 		display: flex;
-		gap: 1rem;
-		padding: 0.8rem;
-		border: 2px solid #0D0D0E;
-		background: #0F0F11;
-		border-radius: 6px;
-		margin-bottom: 0.5rem;
+		gap: var(--space-md);
+		padding: var(--space-sm);
+		border: var(--border-width) solid var(--border);
+		background: var(--surface);
+		border-radius: var(--radius);
+		margin-bottom: var(--space-sm);
 		align-items: center;
 
 		.meta {
 			.name {
 				font-weight: 500;
-				color: var(--sl-color-neutral-800);
+				color: var(--text);
 			}
 			.type {
-				font-size: 0.75rem;
-				color: var(--sl-color-neutral-500);
+				font-size: var(--font-size-xs);
+				color: var(--text-subtle);
 			}
 		}
 	}
 }
 
 sl-icon {
-	font-size: 2rem;
-	color: var(--sl-color-neutral-300);
+	font-size: var(--icon-size);
+	color: var(--icon);
 }
 
 sl-tooltip {
 	--sl-tooltip-arrow-size: 0;
 
 	&::part(body) {
-		background: #0D0D0E;
-		color: var(--sl-color-neutral-700);
+		background: var(--border);
+		color: var(--text-muted);
 	}
 }
 
 `
-

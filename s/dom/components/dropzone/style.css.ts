@@ -9,16 +9,16 @@ export default css`
 	align-items: center;
 	justify-content: center;
 	position: relative;
-	border: 2px dashed var(--sl-color-neutral-300);
-	border-radius: 6px;
-	transition: background 0.2s;
+	border: var(--border-width) dashed var(--border-muted);
+	border-radius: var(--radius);
+	transition: background var(--transition), border-color var(--transition), color var(--transition);
 }
 
 .dz-input {
 	width: 100%;
 	height: 100%;
-	z-index: 999;
-	font-size: 14px;
+	z-index: var(--z-overlay);
+	font-size: var(--font-size-sm);
 	cursor: pointer;
 	opacity: 0;
 
@@ -28,15 +28,15 @@ export default css`
 }
 
 .dropzone:hover {
-	background: var(--sl-color-gray-50);
+	background: var(--surface-hover);
 }
 
 .dropzone[data-hovering] {
-	background: var(--sl-color-gray-50);
-	border-color: var(--sl-color-primary-500);
+	background: var(--surface-hover);
+	border-color: var(--primary);
 
 	& .dz-info {
-		color: var(--sl-color-primary-300);
+		color: var(--primary-soft);
 	}
 }
 
@@ -46,9 +46,8 @@ export default css`
 	flex-direction: column;
 	align-items: center;
 	justify-content: center;
-	gap: 0.5em;
-	color: var(--sl-color-neutral-700);
+	gap: var(--space-sm);
+	color: var(--text-muted);
 }
 
 `
-

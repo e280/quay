@@ -12,16 +12,16 @@ export const QuaySort = shadowElement(() => {
 
 	useStyles(themeCss, css`
 		sl-button sl-icon {
-			font-size: 14px;
+			font-size: var(--font-size-sm);
 		}
 
 		sl-menu {
-			margin-top: 0.3em;
+			margin-top: var(--space-xs);
 
 			.item {
 				display: flex;
 				align-items: center;
-				gap: 0.5em;
+				gap: var(--space-sm);
 			}
 		}
 	`)

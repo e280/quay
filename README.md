@@ -143,3 +143,62 @@ The scope passed to `open()` separates media libraries.
 const projectA = await MediaLibrary.open("project-a")
 const projectB = await MediaLibrary.open("project-b")
 ```
+
+<br/>
+
+## Styling
+
+Customize quay through its css vars
+
+```css
+:root {
+  --quay-surface: #111;
+  --quay-border: #222;
+  --quay-text: #333;
+  --quay-muted: #777;
+  --quay-accent: #0ea5e9;
+  --quay-radius: 6px;
+}
+```
+
+You can scope those variables to one area or one component.
+
+```css
+.media-panel {
+  --quay-surface: #18181b;
+  --quay-border: #27272a;
+}
+
+quay-browser {
+  --quay-browser-thumb-width: 120px;
+  --quay-browser-thumb-height: 72px;
+}
+```
+
+Public tokens:
+
+```css
+--quay-surface
+--quay-surface-hover
+--quay-surface-selected
+--quay-border
+--quay-text
+--quay-muted
+--quay-accent
+--quay-radius
+--quay-browser-thumb-width
+--quay-browser-thumb-height
+```
+
+Quay is built on Shoelace, and its internal theme uses Shoelace tokens as fallbacks.
+For deeper control, set Shoelace tokens in your app or scoped around Quay,
+watch out for conflicts if you already use shoelace components in your app.
+
+```css
+.media-panel {
+  --sl-color-primary-600: #575757;
+  --sl-input-focus-ring-color: rgb(119 119 119 / 35%);
+  --sl-border-radius-medium: 3px;
+  --sl-spacing-x-small: 0.5em;
+}
+```

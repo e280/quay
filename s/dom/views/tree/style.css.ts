@@ -7,12 +7,12 @@ sl-tree-item::part(expand-button) {
 }
 
 sl-tree-item::part(base) {
-	min-height: 30px;
+	min-height: var(--control-height);
 	justify-content: center;
 }
 
 sl-icon:is(.item) {
-	padding: 0.5em;
+	padding: var(--space-sm);
 }
 
 sl-tree-item:not([data-type=folder])::part(expand-button) {
@@ -35,11 +35,11 @@ sl-tree-item:not([data-type=folder])::part(expand-button) {
 }
 
 sl-tree-item {
-	min-height: 30px;
-	transition: background 0.2s ease, border-radius 0.2s ease;
+	min-height: var(--control-height);
+	transition: background var(--transition), border-radius var(--transition);
 
 	::part(label) {
-		gap: 0.5em;
+		gap: var(--space-sm);
 	}
 
 	.folder {
@@ -49,15 +49,15 @@ sl-tree-item {
 	}
 
 	::part(item--selected) {
-		background: rgba(0, 0, 0, 0.4);
-		min-height: 30px;
+		background: var(--surface-selected);
+		min-height: var(--control-height);
 	}
 
 }
 
 sl-tree-item[data-hover] {
-	border-radius: 5px;
-	background: rgba(0, 0, 0, 0.4);
+	border-radius: var(--radius-small);
+	background: var(--surface-selected);
 }
 
 `
