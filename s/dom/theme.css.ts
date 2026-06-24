@@ -36,5 +36,40 @@ export default css`@layer theme, view; @layer theme {
 	box-sizing: border-box;
 }
 
-}`
+sl-button::part(base) {
+	border-color: var(--border);
+	color: var(--text-muted);
+}
 
+sl-button:hover::part(base),
+sl-button:focus-within::part(base),
+sl-button:active::part(base) {
+	background: var(--surface-hover);
+	border-color: var(--border);
+	color: var(--text);
+}
+
+sl-menu-item::part(base) {
+	color: var(--text-muted);
+}
+
+sl-menu-item:hover::part(base),
+sl-menu-item:focus-visible::part(base) {
+	background: var(--surface-hover);
+	color: var(--text);
+}
+
+sl-input::part(base) {
+	border-color: var(--border);
+	color: var(--text);
+}
+
+sl-input:hover::part(base),
+sl-input:focus-within::part(base) {
+	background: var(--surface);
+	border-color: var(--border);
+	box-shadow: 0 0 0 1px var(--surface-hover);
+	color: var(--text);
+}
+
+}`
