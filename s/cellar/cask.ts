@@ -1,6 +1,6 @@
 
 import {Hex} from "@e280/stz"
-import {blake3} from "@noble/hashes/blake3.js"
+import {blake3} from "@awasm/noble"
 
 /** File with a hash label */
 export class Cask {
