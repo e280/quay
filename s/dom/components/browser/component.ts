@@ -18,7 +18,7 @@ export const QuayBrowser = shadowElement(() => {
 	const [viewMode, setViewMode] = useState<'details' | 'tiles'>('tiles')
 
 	useMount(() => {
-		const dispose = group.on.upload.sub(() => render())
+		const dispose = group.on.refresh.sub(() => render())
 		return () => dispose()
 	})
 

@@ -87,11 +87,12 @@ export class Group<Sc extends Schema = any> {
 		this.on.rename.pub({item, newName})
 	}
 
-	upload(files: File[], folder: CodexItem<Sc>) {
+	async upload(files: File[], folder: CodexItem<Sc>) {
 		if(!this.permissions(folder).upload)
 			throw new Error("upload permission not granted")
 
-		return this.on.upload.pub({files, target: folder})
+		await this.on.upload.pub({files, target: folder})
+		await this.on.refresh.pub({})
 	}
 
 	addFolder(parent: CodexItem<Sc>) {
