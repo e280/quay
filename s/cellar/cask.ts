@@ -4,19 +4,23 @@ import {blake3} from "@awasm/noble"
 
 /** File with a hash label */
 export class Cask {
-	static async hash(file: Blob) {
+	static async hash(stream: ReadableStream<Uint8Array>) {
 		const hasher = blake3.create()
 
-		for await (const chunk of file.stream())
+		for await (const chunk of stream) {
 			hasher.update(chunk)
+		}
 
-		const digest = hasher.digest()
-		return Hex.fromBytes(digest)
+		return Hex.fromBytes(hasher.digest())
 	}
 
 	static async make(file: Blob) {
-		const hash = await this.hash(file)
-		return new this(hash, file)
+		return new this(await this.hash(file.stream()), file)
+	}
+
+	static async verify(file: Blob, expectedHash: string) {
+		const hash = await this.hash(file.stream())
+		return hash === expectedHash
 	}
 
 	constructor(public hash: string, public file: Blob) {}

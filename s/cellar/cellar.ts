@@ -28,18 +28,13 @@ export class Cellar {
 		return this.forklift.has(hash)
 	}
 
-	async save(file: Blob) {
-		const cask = await Cask.make(file)
-		if (!await this.forklift.has(cask.hash))
-			await this.forklift.save(cask.hash, cask.file)
-		return cask
+	async write(readable: ReadableStream<Uint8Array>) {
+		return this.forklift.write(readable)
 	}
 
 	async load(hash: string): Promise<Cask> {
 		const bytes = await this.forklift.load(hash)
-		const cask = await Cask.make(bytes)
-		if (cask.hash !== hash) throw new Error(`corruption error, hash mismatch (requested ${hash}) (got ${cask.hash})`)
-		return cask
+		return new Cask(hash, bytes)
 	}
 
 	async delete(hash: string) {

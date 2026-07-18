@@ -60,11 +60,11 @@ export class MediaLibrary extends MediaGroup {
 	}
 
 	async #storeFile(file: File, parent: CodexItem<MediaSchema>) {
-		const cask = await this.cellar.save(file)
-		const existing = await this.#index.get(cask.hash)
+		const hash = await this.cellar.write(file.stream())
+		const existing = await this.#index.get(hash)
 		const now = Date.now()
 		const record: MediaRecord = {
-			hash: cask.hash,
+			hash,
 			label: existing?.label ?? file.name,
 			format: mediaFormat(file.type),
 			mime: file.type,
