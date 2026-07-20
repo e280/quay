@@ -1,9 +1,10 @@
 
-import {Kv, StorageDriver} from "@e280/kv"
+import {sub} from "@e280/stz"
+import {Kv, StorageMagazine} from "@e280/kv"
 
 import {MediaGroup} from "./group.js"
 import {Cellar} from "../../../cellar/cellar.js"
-import {MediaFormat, MediaSchema} from "./schema.js"
+import {MediaFormat, MediaProgress, MediaSchema} from "./schema.js"
 import {CodexItem} from "../../aspects/codex/parts/codex-item.js"
 
 export type MediaRecord = {
@@ -28,6 +29,7 @@ export class MediaLibrary extends MediaGroup {
 	#objectUrls = new Map<string, string>()
 	#index: Kv<MediaRecord>
 
+	progress = sub<[MediaProgress]>()
 	cellar = new Cellar()
 
 	constructor() {
@@ -60,7 +62,38 @@ export class MediaLibrary extends MediaGroup {
 	}
 
 	async #storeFile(file: File, parent: CodexItem<MediaSchema>) {
-		const hash = await this.cellar.write(file.stream())
+		const item = this.#attachPending(file, parent)
+
+		try {
+			const hash = await this.cellar.write(trackProgress(file.stream(), loaded =>
+				this.progress.pub({item, loaded, total: file.size})
+			))
+			const record = await this.#saveRecord(file, hash)
+			item.destroy()
+			this.#attachRecord(record, parent)
+			return record
+		}
+		catch (error) {
+			item.destroy()
+			this.on.refresh.pub({})
+			throw error
+		}
+	}
+
+	#attachPending(file: File, parent: CodexItem<MediaSchema>) {
+		const item = this.config.codex.create("file", {
+			label: file.name,
+			format: mediaFormat(file.type),
+			mime: file.type,
+			size: file.size,
+			previewUrl: null,
+		})
+		parent.attach(item)
+		this.on.refresh.pub({})
+		return item
+	}
+
+	async #saveRecord(file: File, hash: string) {
 		const existing = await this.#index.get(hash)
 		const now = Date.now()
 		const record: MediaRecord = {
@@ -72,10 +105,9 @@ export class MediaLibrary extends MediaGroup {
 			createdAt: existing?.createdAt ?? now,
 			updatedAt: now,
 		}
-		await this.#index.set(record.hash, record)
+		await this.#index.set(hash, record)
 		if (record.format === "image")
-			this.#setPreview(record.hash, URL.createObjectURL(file))
-		this.#attachRecord(record, parent)
+			this.#setPreview(hash, URL.createObjectURL(file))
 		return record
 	}
 
@@ -87,7 +119,7 @@ export class MediaLibrary extends MediaGroup {
 
 	async #delete(hashes: string[]) {
 		for (const hash of hashes) {
-			await this.#index.del(hash)
+			await this.#index.delete(hash)
 			await this.cellar.delete(hash)
 			this.#revokePreview(hash)
 		}
@@ -155,9 +187,9 @@ function mediaFormat(mime: string): MediaFormat {
 function mediaIndex(scope: string) {
 	const storage = globalThis.localStorage
 	if (storage)
-		return new Kv<MediaRecord>(new StorageDriver(storage))
-			.scope("quay.media")
-			.scope(scope)
+		return new Kv<MediaRecord>(new StorageMagazine(storage))
+			.scope<MediaRecord>("quay.media")
+			.scope<MediaRecord>(scope)
 
 	const existing = memoryIndexes.get(scope)
 	if (existing)
@@ -168,3 +200,16 @@ function mediaIndex(scope: string) {
 	return index
 }
 
+function trackProgress(
+		readable: ReadableStream<Uint8Array>,
+		onProgress: (loaded: number) => void,
+	) {
+	let loaded = 0
+	return readable.pipeThrough(new TransformStream({
+		transform(chunk, controller) {
+			loaded += chunk.byteLength
+			onProgress(loaded)
+			controller.enqueue(chunk)
+		},
+	}))
+}

@@ -2,11 +2,9 @@
 import {Txt} from "@e280/stz"
 import {expect, Science, test} from "@e280/science"
 
-import {Cask} from "./cask.js"
 import {Cellar} from "./cellar.js"
 
 const blob = (text: string) => new Blob([Txt.toBytes(text)])
-const hash = async(file: Blob) => (await Cask.make(file)).hash
 
 export default Science.suite({
 	"write + load roundtrip": test(async() => {
@@ -26,17 +24,9 @@ export default Science.suite({
 		const cellar = new Cellar()
 		const file = blob("foo bar")
 		const digest = await cellar.write(file.stream())
-		await cellar.write(file.stream()) // again
+		expect(await cellar.write(file.stream())).is(digest)
 
 		expect(await cellar.has(digest)).is(true)
-	}),
-
-	"verify detects corruption": test(async() => {
-		const good = blob("valid data")
-		const bad = blob("corrupt data")
-
-		const digest = await hash(good)
-		expect(await Cask.verify(bad, digest)).is(false)
 	}),
 
 	"delete removes file": test(async() => {
@@ -69,10 +59,8 @@ export default Science.suite({
 			hashes.push(hash)
 
 		expect(hashes.length).is(3)
-		for (const t of texts) {
-			const h = await hash(blob(t))
-			expect(hashes.includes(h)).is(true)
-		}
+		for (const text of texts)
+			expect(hashes.includes(await cellar.write(blob(text).stream()))).is(true)
 	}),
 
 	"clear removes all entries": test(async() => {

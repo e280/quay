@@ -1,5 +1,6 @@
 
-import {Kv, collect} from "@e280/kv"
+import {collect} from "@e280/stz"
+import {Kv} from "@e280/kv"
 
 export type HyId = string
 export type HyItem = {parent: HyId | null, children: HyId[]}
@@ -27,7 +28,7 @@ export class HyTree {
 	}
 
 	async gets(...ids: HyId[]): Promise<(HyItem | undefined)[]> {
-		const records = await this.records.gets(...ids)
+		const records = await this.records.getMany(ids)
 		return records.map(r => {
 			if (!r) return undefined
 			const [parent, children] = r
@@ -36,13 +37,13 @@ export class HyTree {
 	}
 
 	async require(id: HyId): Promise<HyItem> {
-		const record = await this.records.require(id)
+		const record = await this.records.need(id)
 		const [parent, children] = record
 		return {parent, children}
 	}
 
 	async requires(...ids: HyId[]): Promise<HyItem[]> {
-		const records = await this.records.requires(...ids)
+		const records = await this.records.needMany(ids)
 		return records.map(([parent, children]) => ({parent, children}))
 	}
 
@@ -73,10 +74,10 @@ export class HyTree {
 		}
 
 		// save all new children
-		await this.records.sets(...newcomers)
-
-		// save updated parent item
-		await this.records.set(parent, [parentItem.parent, [...siblings]])
+		await this.records.commit([
+			...newcomers.map(([id, record]) => this.records.op.set(id, record)),
+			this.records.op.set(parent, [parentItem.parent, [...siblings]]),
+		])
 	}
 
 	/** detach this id from its parent in the hierarchy */
@@ -102,7 +103,7 @@ export class HyTree {
 		await this.detach(id)
 		const tree = await collect(this.crawl(id))
 		const ids = tree.map(({id}) => id)
-		await this.records.del(...ids)
+		await this.records.commit(ids.map(id => this.records.op.delete(id)))
 	}
 
 	/** delete absolutely everything */

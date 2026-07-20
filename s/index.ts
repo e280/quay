@@ -3,7 +3,6 @@ export {css} from "lit"
 export {dom} from "@e280/sly"
 
 export * from "./cellar/index.js"
-export * from "./genius/turbo/turbo.js"
 
 export * from "./dom/components.js"
 export {brain} from "./dom/context.js"

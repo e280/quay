@@ -1,44 +1,45 @@
 
+import {Mammoth} from "@e280/mammoth"
+
 import {Cask} from "./cask.js"
-import {Forklift} from "./forklift.js"
-import {OpfsForklift} from "./opfs-forklift.js"
-import {MemoryForklift} from "./memory-forklift.js"
+import {MammothOpfs} from "./mammoth.js"
 
 /**
  * Cellar is an immutable content-addressable file store
  *  - files are identified by their hashes (duplicates are impossible)
  *  - files cannot be modified (delete it and save another)
  *  - no filenames or metadata (store those somewhere else)
- *  - pass in a forklift, which is the backend that actually stores the data
- *    - MemoryForklift is the default
- *    - OpfsForklift is probably what you really want in the browser
+ *  - new Cellar uses Mammoth's in-memory backend by default
+ *  - Cellar.opfs creates MammothOpfs for persistent browser storage
+ *  - pass in a Mammoth to use a different backend
+ *  - most likely you want to use Cellar.opfs for storing files in the browser
  */
 export class Cellar {
 	static async opfs(dirname = "cellar") {
-		return new this(await OpfsForklift.setup(dirname))
+		return new this(await MammothOpfs.setup(dirname))
 	}
 
-	constructor(private forklift: Forklift = new MemoryForklift()) {}
+	constructor(private mammoth: Mammoth | MammothOpfs = new Mammoth()) {}
 
 	async *list(): AsyncIterable<string> {
-		yield* this.forklift.list()
+		for await (const [hash] of this.mammoth.entries())
+			yield hash
 	}
 
 	async has(hash: string): Promise<boolean> {
-		return this.forklift.has(hash)
+		return this.mammoth.has(hash)
 	}
 
 	async write(readable: ReadableStream<Uint8Array>) {
-		return this.forklift.write(readable)
+		return this.mammoth.write(readable)
 	}
 
 	async load(hash: string): Promise<Cask> {
-		const bytes = await this.forklift.load(hash)
-		return new Cask(hash, bytes)
+		return new Cask(hash, await this.mammoth.read(hash))
 	}
 
 	async delete(hash: string) {
-		await this.forklift.delete(hash)
+		await this.mammoth.delete(hash)
 	}
 
 	async clear() {
