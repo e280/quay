@@ -124,7 +124,7 @@ In this way, you can setup sophisticated rules about what actions are permitted,
 ```ts
 import {MediaLibrary, brain, register, components} from "@e280/quay"
 
-const media = await MediaLibrary.open("my-project")
+const media = await MediaLibrary.open("my-app")
 brain.setGroup("media", media)
 
 register(components)
@@ -137,16 +137,16 @@ register(components)
 </div>
 ```
 
-The scope passed to `open()` separates media libraries.
+Open a library once, then derive nested scopes as needed.
 
 ```ts
-const projectA = await MediaLibrary.open("project-a")
-const projectB = await MediaLibrary.open("project-b")
+const project = await media.scope("project-a")
+const favorites = await project.scope("favorites")
 ```
 
-Deleting an item removes its record from that library. File bytes are shared
-between libraries and remain until `media.deleteResource(hash)` is called.
-Callers are responsible for removing other records before deleting a resource.
+Adding media to a scope also adds it to every parent scope. Removing media from
+a scope removes it from that scope and its child scopes. Removing it from the
+root removes it everywhere, including its stored file.
 
 <br/>
 

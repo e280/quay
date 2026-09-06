@@ -34,7 +34,7 @@ export default Science.suite({
 		expect(await recordByLabel(store, "image.png")).ok()
 	}),
 
-	"deletes media records and resources explicitly": test(async() => {
+	"root deletion removes media records and resources": test(async() => {
 		const store = new MediaLibrary()
 		await store.upload([file("delete.png", "delete-image", "image/png")], store.config.root)
 
@@ -44,9 +44,6 @@ export default Science.suite({
 		await store.delete(item)
 
 		expect(store.findByHash(record.hash)).is(undefined)
-		expect(await store.cellar.has(record.hash)).is(true)
-
-		await store.deleteResource(record.hash)
 		expect(await store.cellar.has(record.hash)).is(false)
 	}),
 

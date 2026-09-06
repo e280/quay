@@ -22,12 +22,15 @@ export class MediaLibrary extends MediaGroup {
 		const group = new this()
 		group.cellar = await Cellar.opfs("media")
 		group.#index = mediaIndex(scope)
+		group.#lineage = [group.#index]
 		await group.#load()
 		return group
 	}
 
+	#index
+	#lineage
+	#root = this
 	#objectUrls = new Map<string, string>()
-	#index: Kv<MediaRecord>
 
 	progress = sub<[MediaProgress]>()
 	cellar = new Cellar()
@@ -35,6 +38,7 @@ export class MediaLibrary extends MediaGroup {
 	constructor() {
 		super()
 		this.#index = mediaIndex("default")
+		this.#lineage = [this.#index]
 		this.on.upload.sub(({files, target}) => {
 			return this.#upload(files, target)
 		})
@@ -42,6 +46,20 @@ export class MediaLibrary extends MediaGroup {
 			const hashes = this.#hashes(items)
 			return this.#delete(hashes)
 		})
+	}
+
+	get #isRoot() {
+		return this === this.#root
+	}
+
+	async scope(name: string) {
+		const child = new MediaLibrary()
+		child.cellar = this.cellar
+		child.#index = this.#index.scope<MediaRecord>(name)
+		child.#lineage = [...this.#lineage, child.#index]
+		child.#root = this.#root
+		await child.#load()
+		return child
 	}
 
 	async *records() {
@@ -94,7 +112,7 @@ export class MediaLibrary extends MediaGroup {
 	}
 
 	async #saveRecord(file: File, hash: string) {
-		const existing = await this.#index.get(hash)
+		const existing = await this.#index.get(hash) ?? await this.#root.#index.get(hash)
 		const now = Date.now()
 		const record: MediaRecord = {
 			hash,
@@ -105,7 +123,7 @@ export class MediaLibrary extends MediaGroup {
 			createdAt: existing?.createdAt ?? now,
 			updatedAt: now,
 		}
-		await this.#index.set(hash, record)
+		await this.#index.commit(this.#lineage.map(index => index.op.set(hash, record)))
 		if (record.format === "image")
 			this.#setPreview(hash, URL.createObjectURL(file))
 		return record
@@ -118,21 +136,17 @@ export class MediaLibrary extends MediaGroup {
 	}
 
 	async #delete(hashes: string[]) {
-		// A parent view can contain several scoped records for the same resource.
-		const keys = (await collect(this.#index.entries()))
+		const index = this.#index.crush()
+		const keys = (await collect(index.entries()))
 			.filter(([, record]) => hashes.includes(record.hash))
 			.map(([key]) => key)
-		for (const key of keys)
-			await this.#index.delete(key)
+		await index.commit(keys.map(key => index.op.delete(key)))
 
 		for (const hash of hashes) {
 			this.#revokePreview(hash)
+			if (this.#isRoot)
+				await this.cellar.delete(hash)
 		}
-	}
-
-	/** Delete shared file bytes. Callers are responsible for removing references. */
-	deleteResource(hash: string) {
-		return this.cellar.delete(hash)
 	}
 
 	findByHash(hash: string) {
@@ -198,7 +212,8 @@ function mediaIndex(scope: string) {
 	const storage = globalThis.localStorage
 	if (storage)
 		return new Kv<MediaRecord>(new StorageMagazine(storage))
-			.scope<MediaRecord>("quay.media")
+			.scope("quay")
+			.scope("media")
 			.scope<MediaRecord>(scope)
 
 	const existing = memoryIndexes.get(scope)
