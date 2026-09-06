@@ -144,6 +144,10 @@ const projectA = await MediaLibrary.open("project-a")
 const projectB = await MediaLibrary.open("project-b")
 ```
 
+Deleting an item removes its record from that library. File bytes are shared
+between libraries and remain until `media.deleteResource(hash)` is called.
+Callers are responsible for removing other records before deleting a resource.
+
 <br/>
 
 ## Styling

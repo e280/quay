@@ -1,5 +1,5 @@
 
-import {sub} from "@e280/stz"
+import {collect, sub} from "@e280/stz"
 import {Kv, StorageMagazine} from "@e280/kv"
 
 import {MediaGroup} from "./group.js"
@@ -118,11 +118,21 @@ export class MediaLibrary extends MediaGroup {
 	}
 
 	async #delete(hashes: string[]) {
+		// A parent view can contain several scoped records for the same resource.
+		const keys = (await collect(this.#index.entries()))
+			.filter(([, record]) => hashes.includes(record.hash))
+			.map(([key]) => key)
+		for (const key of keys)
+			await this.#index.delete(key)
+
 		for (const hash of hashes) {
-			await this.#index.delete(hash)
-			await this.cellar.delete(hash)
 			this.#revokePreview(hash)
 		}
+	}
+
+	/** Delete shared file bytes. Callers are responsible for removing references. */
+	deleteResource(hash: string) {
+		return this.cellar.delete(hash)
 	}
 
 	findByHash(hash: string) {
