@@ -144,6 +144,13 @@ const project = await media.scope("project-a")
 const favorites = await project.scope("favorites")
 ```
 
+Media already in the library can be included in another scope without uploading
+it again.
+
+```ts
+await project.include(hash)
+```
+
 Adding media to a scope also adds it to every parent scope. Removing media from
 a scope removes it from that scope and its child scopes. Removing it from the
 root removes it everywhere, including its stored file.

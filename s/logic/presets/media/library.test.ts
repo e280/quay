@@ -34,6 +34,20 @@ export default Science.suite({
 		expect(await recordByLabel(store, "image.png")).ok()
 	}),
 
+	"includes existing media in a scope": test(async() => {
+		const library = new MediaLibrary()
+		await library.upload([file("include.txt", "include")], library.config.root)
+		const record = await recordByLabel(library, "include.txt")
+		const project = await library.scope("include-project")
+
+		await project.include(record.hash)
+
+		expect(project.findByHash(record.hash)).ok()
+		expect(await recordByLabel(project, "include.txt")).ok()
+		expect(await project.cellar.has(record.hash)).is(true)
+		await expect(() => project.include("missing")).throwsAsync()
+	}),
+
 	"root deletion removes media records and resources": test(async() => {
 		const store = new MediaLibrary()
 		await store.upload([file("delete.png", "delete-image", "image/png")], store.config.root)

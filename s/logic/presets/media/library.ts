@@ -67,6 +67,15 @@ export class MediaLibrary extends MediaGroup {
 			yield record
 	}
 
+	async include(hash: string) {
+		const record = await this.#root.#index.need(hash)
+		await this.#index.commit(this.#lineage.map(index => index.op.set(hash, record)))
+		if (record.format === "image" && !this.#objectUrls.has(hash))
+			await this.#loadPreview(record)
+		this.#attachRecord(record)
+		this.on.refresh.pub({})
+	}
+
 	async #load() {
 		for await (const record of this.records()) {
 			if (record.format === "image" && !this.#objectUrls.has(record.hash))
