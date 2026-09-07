@@ -10,12 +10,14 @@ delete (globalThis as any).localStorage
 export default Science.suite({
 	"uploads files into cellar and index": test(async() => {
 		const group = new MediaLibrary()
-		await group.upload([file("hello.txt", "hello")], group.config.root)
+		const project = await group.scope("upload-project")
+		await project.upload([file("hello.txt", "hello")], project.config.root)
 
-		const record = await recordByLabel(group, "hello.txt")
-		const item = group.findByHash(record.hash)!
+		const record = await recordByLabel(project, "hello.txt")
+		const item = project.findByHash(record.hash)!
 
 		expect(item.specimen.label).is("hello.txt")
+		expect(group.findByHash(record.hash)).ok()
 		expect(await group.cellar.has(record.hash)).is(true)
 	}),
 
@@ -39,12 +41,15 @@ export default Science.suite({
 		await library.upload([file("include.txt", "include")], library.config.root)
 		const record = await recordByLabel(library, "include.txt")
 		const project = await library.scope("include-project")
+		const favorites = await project.scope("favorites")
 
-		await project.include(record.hash)
+		await favorites.include(record.hash)
 
 		expect(project.findByHash(record.hash)).ok()
-		expect(await recordByLabel(project, "include.txt")).ok()
+		expect(favorites.findByHash(record.hash)).ok()
 		expect(await project.cellar.has(record.hash)).is(true)
+		await favorites.delete(favorites.findByHash(record.hash)!)
+		expect(project.findByHash(record.hash)).ok()
 		await expect(() => project.include("missing")).throwsAsync()
 	}),
 
@@ -54,10 +59,13 @@ export default Science.suite({
 
 		const record = await recordByLabel(store, "delete.png")
 		const item = store.findByHash(record.hash)!
+		const project = await store.scope("delete-project")
+		await project.include(record.hash)
 
 		await store.delete(item)
 
 		expect(store.findByHash(record.hash)).is(undefined)
+		expect(project.findByHash(record.hash)).is(undefined)
 		expect(await store.cellar.has(record.hash)).is(false)
 	}),
 

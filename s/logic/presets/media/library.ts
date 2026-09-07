@@ -30,6 +30,7 @@ export class MediaLibrary extends MediaGroup {
 	#index
 	#lineage
 	#root = this
+	#family = new Set<MediaLibrary>([this])
 	#objectUrls = new Map<string, string>()
 
 	progress = sub<[MediaProgress]>()
@@ -59,6 +60,7 @@ export class MediaLibrary extends MediaGroup {
 		child.#lineage = [...this.#lineage, child.#index]
 		child.#root = this.#root
 		await child.#load()
+		this.#root.#family.add(child)
 		return child
 	}
 
@@ -70,18 +72,16 @@ export class MediaLibrary extends MediaGroup {
 	async include(hash: string) {
 		const record = await this.#root.#index.need(hash)
 		await this.#index.commit(this.#lineage.map(index => index.op.set(hash, record)))
-		if (record.format === "image" && !this.#objectUrls.has(hash))
-			await this.#loadPreview(record)
-		this.#attachRecord(record)
-		this.on.refresh.pub({})
+		await this.#syncAdded(record)
 	}
 
-	async #load() {
-		for await (const record of this.records()) {
+	async #load(records: AsyncIterable<MediaRecord> | Iterable<MediaRecord> = this.records(), parent = this.config.root) {
+		for await (const record of records) {
 			if (record.format === "image" && !this.#objectUrls.has(record.hash))
 				await this.#loadPreview(record)
-			this.#attachRecord(record, this.config.root)
+			this.#attachRecord(record, parent)
 		}
+		this.on.refresh.pub({})
 	}
 
 	async #upload(files: File[], parent: CodexItem<MediaSchema>) {
@@ -97,7 +97,7 @@ export class MediaLibrary extends MediaGroup {
 			))
 			const record = await this.#saveRecord(file, hash)
 			item.destroy()
-			this.#attachRecord(record, parent)
+			await this.#syncAdded(record, parent)
 			return record
 		}
 		catch (error) {
@@ -152,9 +152,28 @@ export class MediaLibrary extends MediaGroup {
 		await index.commit(keys.map(key => index.op.delete(key)))
 
 		for (const hash of hashes) {
-			this.#revokePreview(hash)
 			if (this.#isRoot)
 				await this.cellar.delete(hash)
+		}
+		this.#syncDeleted(hashes)
+	}
+
+	#syncDeleted(hashes: string[]) {
+		for (const library of this.#root.#family) {
+			if (!library.#lineage.includes(this.#index))
+				continue
+			for (const hash of hashes) {
+				library.findByHash(hash)?.destroy()
+				library.#revokePreview(hash)
+			}
+			library.on.refresh.pub({})
+		}
+	}
+
+	async #syncAdded(record: MediaRecord, parent = this.config.root) {
+		for (const library of this.#root.#family) {
+			if (this.#lineage.includes(library.#index))
+				await library.#load([record], library === this ? parent : library.config.root)
 		}
 	}
 
@@ -166,6 +185,7 @@ export class MediaLibrary extends MediaGroup {
 	}
 
 	dispose() {
+		this.#root.#family.delete(this)
 		for (const url of this.#objectUrls.values())
 			URL.revokeObjectURL(url)
 		this.#objectUrls.clear()

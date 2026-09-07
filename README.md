@@ -140,7 +140,8 @@ register(components)
 Open a library once, then derive nested scopes as needed.
 
 ```ts
-const project = await media.scope("project-a")
+const library = await MediaLibrary.open("my-app")
+const project = await library.scope("project-a")
 const favorites = await project.scope("favorites")
 ```
 
@@ -148,7 +149,8 @@ Media already in the library can be included in another scope without uploading
 it again.
 
 ```ts
-await project.include(hash)
+await project.include(hash)   // Library → Project
+await favorites.include(hash) // Library → Project → Favorites
 ```
 
 Adding media to a scope also adds it to every parent scope. Removing media from
