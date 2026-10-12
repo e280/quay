@@ -121,10 +121,21 @@ In this way, you can setup sophisticated rules about what actions are permitted,
 
 `MediaLibrary` is a small persistent media-bin preset.
 
+Create a storage worker entry:
+
+```js
+// cellar.worker.js
+import {setupCellarWorker} from "@e280/quay/worker"
+
+await setupCellarWorker()
+```
+
+Pass its browser-loadable URL to `MediaLibrary.open` or `Cellar.opfs`:
+
 ```ts
 import {MediaLibrary, brain, register, components} from "@e280/quay"
 
-const media = await MediaLibrary.open("my-app")
+const media = await MediaLibrary.open("my-app", "/cellar.worker.js")
 brain.setGroup("media", media)
 
 register(components)
@@ -140,7 +151,7 @@ register(components)
 Open a library once, then derive nested scopes as needed.
 
 ```ts
-const library = await MediaLibrary.open("my-app")
+const library = await MediaLibrary.open("my-app", "/cellar.worker.js")
 const project = await library.scope("project-a")
 const favorites = await project.scope("favorites")
 ```

@@ -15,8 +15,8 @@ import {MammothOpfs} from "./mammoth.js"
  *  - most likely you want to use Cellar.opfs for storing files in the browser
  */
 export class Cellar {
-	static async opfs(dirname = "cellar") {
-		return new this(await MammothOpfs.setup(dirname))
+	static async opfs(dirname: string, workerUrl: string | URL) {
+		return new this(await MammothOpfs.setup(dirname, workerUrl))
 	}
 
 	constructor(private mammoth: Mammoth | MammothOpfs = new Mammoth()) {}

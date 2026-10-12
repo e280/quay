@@ -15,9 +15,9 @@ export type MammothSchematic = AsSchematic<{
 
 /** Worker proxy for Mammoth using an OPFS bucket and IndexedDB manifest. */
 export class MammothOpfs {
-	static async setup(dirname: string) {
+	static async setup(dirname: string, workerUrl: string | URL) {
 		const thread = await Comrade.thread<MammothSchematic>({
-			workerUrl: "/node_modules/@e280/quay/x/cellar/mammoth.worker.bundle.min.js",
+			workerUrl,
 			setupHost: () => ({}),
 		})
 		const mammoth = new this(thread)

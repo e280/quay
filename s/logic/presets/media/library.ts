@@ -18,9 +18,9 @@ export type MediaRecord = {
 }
 
 export class MediaLibrary extends MediaGroup {
-	static async open(scope = "default") {
+	static async open(scope: string, workerUrl: string | URL) {
 		const group = new this()
-		group.cellar = await Cellar.opfs("media")
+		group.cellar = await Cellar.opfs("media", workerUrl)
 		group.#index = mediaIndex(scope)
 		group.#lineage = [group.#index]
 		await group.#load()
