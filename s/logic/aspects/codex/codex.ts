@@ -1,5 +1,5 @@
 
-import {MapG} from "@e280/stz"
+import {need} from "@e280/stz"
 
 import {Clade} from "./parts/clade.js"
 import {Taxonomy} from "./parts/taxonomy.js"
@@ -16,7 +16,7 @@ export class Codex<Sc extends Schema> {
 		return new this(clade, hierarchy)
 	}
 
-	#items = new MapG<Id, CodexItem<Sc>>()
+	#items = new Map<Id, CodexItem<Sc>>()
 
 	constructor(
 		public clade: Clade<Sc>,
@@ -40,7 +40,7 @@ export class Codex<Sc extends Schema> {
 
 	/** get an item by its id */
 	require(id: Id): CodexItem<Sc> {
-		return this.#items.require(id).signal()
+		return need(this.#items, id).signal()
 	}
 }
 

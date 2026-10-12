@@ -1,5 +1,5 @@
 
-import {GMap, sub} from "@e280/stz"
+import {guarantee, sub} from "@e280/stz"
 import {Kv, MemoryMagazine, StorageMagazine, type Op} from "@e280/kv"
 
 import {MediaGroup} from "./group.js"
@@ -242,7 +242,7 @@ export class MediaLibrary extends MediaGroup {
 }
 
 const mediaFormats = new Set(["video", "image", "audio"])
-const memoryMagazines = new GMap<string, MemoryMagazine>()
+const memoryMagazines = new Map<string, MemoryMagazine>()
 
 function mediaFormat(mime: string): MediaFormat {
 	const [type] = mime.split("/")
@@ -258,7 +258,7 @@ function mediaIndex(scope: string) {
 		return {index, magazine}
 	}
 
-	const magazine = memoryMagazines.guarantee(scope, () => new MemoryMagazine())
+	const magazine = guarantee(memoryMagazines, scope, () => new MemoryMagazine())
 	const index = new Kv<MediaRecord>(magazine)
 	return {index, magazine}
 }

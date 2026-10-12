@@ -1,5 +1,5 @@
 
-import {MapG} from "@e280/stz"
+import {need} from "@e280/stz"
 import {Id} from "./types.js"
 
 /**
@@ -9,15 +9,15 @@ import {Id} from "./types.js"
  *  - Things can be orphans (bring your own concept of a "root").
  */
 export class Hierarchy {
-	#children = new MapG<Id, Set<Id>>()
-	#parents = new MapG<Id, Id>()
+	#children = new Map<Id, Set<Id>>()
+	#parents = new Map<Id, Id>()
 
 	has(id: Id) {
 		return this.#children.has(id)
 	}
 
 	getChildren(id: Id) {
-		return this.#children.require(id)
+		return need(this.#children, id)
 	}
 
 	getParent(id: Id) {

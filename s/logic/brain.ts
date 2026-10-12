@@ -1,5 +1,5 @@
 
-import {MapG} from "@e280/stz"
+import {need} from "@e280/stz"
 import {Group} from "./group.js"
 
 type RegisteredGroup<G> = G extends Group<infer _Schema> ? G : never
@@ -10,7 +10,7 @@ type RegisteredGroup<G> = G extends Group<infer _Schema> ? G : never
  *  - each group is a different hierarchy, which can have unique types and stuff
  */
 export class Brain {
-	#groups = new MapG<string, Group>()
+	#groups = new Map<string, Group>()
 
 	setGroup<G>(name: string, group: RegisteredGroup<G>) {
 		this.#groups.set(name, group)
@@ -18,7 +18,7 @@ export class Brain {
 	}
 
 	getGroup<G = Group>(name: string) {
-		return this.#groups.require(name) as RegisteredGroup<G>
+		return need(this.#groups, name) as RegisteredGroup<G>
 	}
 }
 

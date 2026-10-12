@@ -1,7 +1,7 @@
 
-import {Hex} from "@e280/stz"
+import {hex} from "@e280/stz"
 
 export function generateId() {
-	return Hex.random()
+	return hex.random()
 }
 

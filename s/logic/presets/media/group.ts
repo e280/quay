@@ -1,6 +1,6 @@
 
 import {html} from "lit"
-import {MapG} from "@e280/stz"
+import {need} from "@e280/stz"
 import {Content} from "@e280/sly"
 
 import {Group} from "../../group.js"
@@ -12,7 +12,7 @@ import {CodexItem} from "../../aspects/codex/parts/codex-item.js"
 
 export class MediaGroup extends Group<MediaSchema> {
 	static config = (): GroupConfig<MediaSchema> => {
-		const formatIcons = new MapG<MediaFormat, Content>()
+		const formatIcons = new Map<MediaFormat, Content>()
 			.set("audio", html`<sl-icon name=music-note-beamed></sl-icon>`)
 			.set("video", html`<sl-icon name=film></sl-icon>`)
 			.set("image", html`<sl-icon name=image></sl-icon>`)
@@ -57,7 +57,7 @@ export class MediaGroup extends Group<MediaSchema> {
 
 		const renderIcon = (item: CodexItem<MediaSchema>, opened: boolean) => {
 			return item.isKind("file")
-				? formatIcons.require(item.specimen.format)
+				? need(formatIcons, item.specimen.format)
 				: opened ? html`<sl-icon name="folder2-open"></sl-icon>` : item.taxon.icon
 		}
 
