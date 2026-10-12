@@ -1,6 +1,6 @@
 
-import {collect, sub} from "@e280/stz"
-import {Kv, StorageMagazine} from "@e280/kv"
+import {GMap, sub} from "@e280/stz"
+import {Kv, MemoryMagazine, StorageMagazine, type Op} from "@e280/kv"
 
 import {MediaGroup} from "./group.js"
 import {Cellar} from "../../../cellar/cellar.js"
@@ -21,13 +21,16 @@ export class MediaLibrary extends MediaGroup {
 	static async open(scope: string, workerUrl: string | URL) {
 		const group = new this()
 		group.cellar = await Cellar.opfs("media", workerUrl)
-		group.#index = mediaIndex(scope)
+		const {index, magazine} = mediaIndex(scope)
+		group.#index = index
+		group.#magazine = magazine
 		group.#lineage = [group.#index]
 		await group.#load()
 		return group
 	}
 
 	#index
+	#magazine
 	#lineage
 	#root = this
 	#family = new Set<MediaLibrary>([this])
@@ -38,7 +41,9 @@ export class MediaLibrary extends MediaGroup {
 
 	constructor() {
 		super()
-		this.#index = mediaIndex("default")
+		const {index, magazine} = mediaIndex("default")
+		this.#index = index
+		this.#magazine = magazine
 		this.#lineage = [this.#index]
 		this.on.upload.sub(({files, target}) => {
 			return this.#upload(files, target)
@@ -57,6 +62,7 @@ export class MediaLibrary extends MediaGroup {
 		const child = new MediaLibrary()
 		child.cellar = this.cellar
 		child.#index = this.#index.scope<MediaRecord>(name)
+		child.#magazine = this.#magazine
 		child.#lineage = [...this.#lineage, child.#index]
 		child.#root = this.#root
 		await child.#load()
@@ -145,11 +151,17 @@ export class MediaLibrary extends MediaGroup {
 	}
 
 	async #delete(hashes: string[]) {
-		const index = this.#index.crush()
-		const keys = (await collect(index.entries()))
-			.filter(([, record]) => hashes.includes(record.hash))
-			.map(([key]) => key)
-		await index.commit(keys.map(key => index.op.delete(key)))
+		const prefix = this.#index.op.delete("")[0]
+		const scope = prefix.slice(0, -1)
+		const selected = new Set(hashes)
+		const changes: Op<MediaRecord>[] = []
+		for await (const [key, value] of this.#magazine.entries()) {
+			if (scope && !key.startsWith(prefix) && !key.startsWith(scope + "."))
+				continue
+			if (selected.has((value as MediaRecord).hash))
+				changes.push([key, undefined])
+		}
+		await this.#magazine.commit(changes)
 
 		for (const hash of hashes) {
 			if (this.#isRoot)
@@ -230,7 +242,7 @@ export class MediaLibrary extends MediaGroup {
 }
 
 const mediaFormats = new Set(["video", "image", "audio"])
-const memoryIndexes = new Map<string, Kv<MediaRecord>>()
+const memoryMagazines = new GMap<string, MemoryMagazine>()
 
 function mediaFormat(mime: string): MediaFormat {
 	const [type] = mime.split("/")
@@ -239,19 +251,16 @@ function mediaFormat(mime: string): MediaFormat {
 
 function mediaIndex(scope: string) {
 	const storage = globalThis.localStorage
-	if (storage)
-		return new Kv<MediaRecord>(new StorageMagazine(storage))
-			.scope("quay")
-			.scope("media")
-			.scope<MediaRecord>(scope)
+	if (storage) {
+		const magazine = new StorageMagazine(storage)
+		const index = new Kv<MediaRecord>(magazine)
+			.scope<MediaRecord>("quay", "media", scope)
+		return {index, magazine}
+	}
 
-	const existing = memoryIndexes.get(scope)
-	if (existing)
-		return existing
-
-	const index = new Kv<MediaRecord>()
-	memoryIndexes.set(scope, index)
-	return index
+	const magazine = memoryMagazines.guarantee(scope, () => new MemoryMagazine())
+	const index = new Kv<MediaRecord>(magazine)
+	return {index, magazine}
 }
 
 function trackProgress(

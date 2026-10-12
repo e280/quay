@@ -1,5 +1,4 @@
 
-import {Txt} from "@e280/stz"
 import {expect, Science, test} from "@e280/science"
 
 import {MediaLibrary} from "./library.js"
@@ -23,7 +22,7 @@ export default Science.suite({
 
 	"upload respects upload permission": test(async() => {
 		const group = new MediaLibrary()
-		const file = new File([Txt.toBytes("hello")], "hello.txt", {type: "text/plain"})
+		const file = new File(["hello"], "hello.txt", {type: "text/plain"})
 		group.config.permissions = () => Permissions.readOnly
 
 		expect(() => group.upload([file], group.config.root)).throws()
@@ -67,12 +66,33 @@ export default Science.suite({
 		expect(store.findByHash(record.hash)).is(undefined)
 		expect(project.findByHash(record.hash)).is(undefined)
 		expect(await store.cellar.has(record.hash)).is(false)
+		const reopened = await store.scope("delete-project")
+		expect(reopened.findByHash(record.hash)).is(undefined)
+	}),
+
+	"scope deletion removes descendants but preserves ancestors and siblings": test(async() => {
+		const library = new MediaLibrary()
+		await library.upload([file("subtree-delete.txt", "subtree-delete")], library.config.root)
+		const record = await recordByLabel(library, "subtree-delete.txt")
+		const project = await library.scope("subtree-project")
+		const favorites = await project.scope("favorites")
+		const sibling = await library.scope("subtree-sibling")
+		await favorites.include(record.hash)
+		await sibling.include(record.hash)
+		favorites.dispose()
+
+		await project.delete(project.findByHash(record.hash)!)
+		const reopened = await project.scope("favorites")
+		expect(reopened.findByHash(record.hash)).is(undefined)
+		expect(library.findByHash(record.hash)).ok()
+		expect(sibling.findByHash(record.hash)).ok()
+		expect(await library.cellar.has(record.hash)).is(true)
 	}),
 
 })
 
 function file(name: string, text: string, type = "text/plain") {
-	return new File([Txt.toBytes(text)], name, {type})
+	return new File([text], name, {type})
 }
 
 async function records(store: MediaLibrary) {

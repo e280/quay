@@ -1,6 +1,6 @@
 import {collect} from "@e280/stz"
 import {Comrade} from "@e280/comrade"
-import {Mammoth, OpfsBucket} from "@e280/mammoth"
+import {Mammoth, OpfsDepot} from "@e280/mammoth"
 import {idbOpen, IdbMagazine, Kv} from "@e280/kv"
 
 import type {MammothSchematic} from "./mammoth.js"
@@ -13,7 +13,7 @@ export async function setupCellarWorker() {
 			const root = await navigator.storage.getDirectory()
 			const directory = await root.getDirectoryHandle(dirname, {create: true})
 			mammoth = new Mammoth(
-				new OpfsBucket(directory),
+				new OpfsDepot(directory),
 				new Kv(new IdbMagazine(await idbOpen(`quay.mammoth:${dirname}`))),
 			)
 		},

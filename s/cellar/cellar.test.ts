@@ -1,10 +1,9 @@
 
-import {Txt} from "@e280/stz"
 import {expect, Science, test} from "@e280/science"
 
 import {Cellar} from "./cellar.js"
 
-const blob = (text: string) => new Blob([Txt.toBytes(text)])
+const blob = (text: string) => new Blob([text])
 
 export default Science.suite({
 	"write + load roundtrip": test(async() => {
